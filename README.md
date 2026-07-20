@@ -15,18 +15,14 @@ Un **LLM orchestré localement** rédige chaque bilan. Il n'applique pas un
 gabarit : il observe, calcule, puis écrit. Ses trois sources, interrogées en
 direct via des serveurs **MCP** (Model Context Protocol) :
 
-- **Vesta** — le jumeau domotique de la maison (une quinzaine de sondes
+- **MCP System** — le jumeau domotique de la maison (une quinzaine de sondes
   température/hygrométrie/CO₂, ouvrants, brasseurs de plafond, chaudière),
   qui lui permet aussi de déposer la recommandation du jour dans la maison ;
 - **InfluxDB** — l'historique fin des capteurs, pour relire la nuit heure
   par heure (pentes de refroidissement, vérité des ouvertures, apports
   solaires mesurés) ;
-- **Open-Meteo** — prévisions et qualité de l'air (ozone, particules) pour
+- **MCP Open-Meteo** — prévisions et qualité de l'air (ozone, particules) pour
   la station voisine de Meaux, modèles Météo-France.
-
-Les instructions détaillées de l'orchestration (prompts, enchaînements,
-outillage) ne sont volontairement pas publiées : ce dépôt contient les
-rapports et leurs données, pas la recette.
 
 ## Repères méthodologiques
 
@@ -58,7 +54,6 @@ capteurs concordants sont un signal.
 
 ## Données et vie privée
 
-Les copies publiées sont anonymisées automatiquement (prénoms retirés,
-coordonnées GPS supprimées, références d'outillage neutralisées). Les
+Les copies publiées sont anonymisées automatiquement. Les
 mesures elles-mêmes — températures, hygrométries, CO₂, énergies — sont
 authentiques et non retouchées.
