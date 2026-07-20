@@ -1,0 +1,312 @@
+{
+ "genere": "2026-07-20T04:04:08",
+ "dates": [
+  {
+   "date": "2026-06-26",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-06-26.md",
+     "html": "bilans/2026-06-26.html"
+    },
+    {
+     "cle": "nuit",
+     "label": "nuit (23h)",
+     "md": "bilans/2026-06-26-nuit.md",
+     "html": "bilans/2026-06-26-nuit.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-27",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-06-27.md",
+     "html": "bilans/2026-06-27.html"
+    },
+    {
+     "cle": "nuit",
+     "label": "nuit (22h30)",
+     "md": "bilans/2026-06-27-nuit.md",
+     "html": "bilans/2026-06-27-nuit.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-28",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-06-28.md",
+     "html": "bilans/2026-06-28.html"
+    },
+    {
+     "cle": "matin-09h",
+     "label": "matin (09h)",
+     "md": "bilans/2026-06-28-matin-09h.md",
+     "html": "bilans/2026-06-28-matin-09h.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-29",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-06-29.md",
+     "html": "bilans/2026-06-29.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-30",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-06-30.md",
+     "html": "bilans/2026-06-30.html"
+    },
+    {
+     "cle": "soir",
+     "label": "soir (19h)",
+     "md": "bilans/2026-06-30-soir.md",
+     "html": "bilans/2026-06-30-soir.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-01",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-01.md",
+     "html": "bilans/2026-07-01.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-03",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-03.md",
+     "html": "bilans/2026-07-03.html"
+    },
+    {
+     "cle": "matin-10h",
+     "label": "matin (10h)",
+     "md": "bilans/2026-07-03-matin-10h.md",
+     "html": "bilans/2026-07-03-matin-10h.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-04",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-04.md",
+     "html": "bilans/2026-07-04.html"
+    },
+    {
+     "cle": "soir",
+     "label": "soir (21h)",
+     "md": "bilans/2026-07-04-soir.md",
+     "html": "bilans/2026-07-04-soir.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-05",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-05.md",
+     "html": "bilans/2026-07-05.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-06",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-06.md",
+     "html": "bilans/2026-07-06.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-07",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-07.md",
+     "html": "bilans/2026-07-07.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-08",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-08.md",
+     "html": "bilans/2026-07-08.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-09",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-09.md",
+     "html": "bilans/2026-07-09.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-10",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-10.md",
+     "html": "bilans/2026-07-10.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-11",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-11.md",
+     "html": "bilans/2026-07-11.html"
+    },
+    {
+     "cle": "soir",
+     "label": "soir (17h)",
+     "md": "bilans/2026-07-11-soir.md",
+     "html": "bilans/2026-07-11-soir.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-12",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-12.md",
+     "html": "bilans/2026-07-12.html"
+    },
+    {
+     "cle": "nuit",
+     "label": "nuit (00h39)",
+     "md": "bilans/2026-07-12-nuit.md",
+     "html": "bilans/2026-07-12-nuit.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-13",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-13.md",
+     "html": "bilans/2026-07-13.html"
+    },
+    {
+     "cle": "nuit",
+     "label": "nuit (01h52)",
+     "md": "bilans/2026-07-13-nuit.md",
+     "html": "bilans/2026-07-13-nuit.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-14",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-14.md",
+     "html": "bilans/2026-07-14.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-15",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-15.md",
+     "html": "bilans/2026-07-15.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-16",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-16.md",
+     "html": "bilans/2026-07-16.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-17",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-17.md",
+     "html": "bilans/2026-07-17.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-18",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-18.md",
+     "html": "bilans/2026-07-18.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-19",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-19.md",
+     "html": "bilans/2026-07-19.html"
+    }
+   ]
+  }
+ ]
+}

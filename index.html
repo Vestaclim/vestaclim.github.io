@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Vesta Almanach — le bilan climatique quotidien de la maison : lecture du matin, historique et rapports complets.">
+<title>Vesta Almanach</title>
+<style>
+:root{
+  --fond:#f7f4ee;
+  --carte:rgba(255,253,249,.85);
+  --encre:#28251f;
+  --sourd:#99917e;
+  --ligne:#e8e2d4;
+  --accent:#b05e35;
+  --accent-doux:rgba(176,94,53,.10);
+  --ombre:0 14px 40px rgba(45,32,14,.10);
+}
+@media (prefers-color-scheme:dark){:root{
+  --fond:#141310;
+  --carte:rgba(26,24,20,.85);
+  --encre:#e6dfd2;
+  --sourd:#7e7669;
+  --ligne:#2d2a23;
+  --accent:#d99a72;
+  --accent-doux:rgba(217,154,114,.12);
+  --ombre:0 14px 40px rgba(0,0,0,.5);
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fond);color:var(--encre);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  display:flex;flex-direction:column;overflow:hidden}
+
+/* ---------- en-tête ---------- */
+header{position:relative;z-index:5;display:flex;align-items:center;gap:14px;
+  padding:calc(8px + env(safe-area-inset-top)) clamp(14px,3vw,28px) 8px;
+  background:var(--carte);backdrop-filter:blur(16px) saturate(1.2);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  border-bottom:1px solid var(--ligne)}
+.marque{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0;user-select:none}
+.flamme{width:20px;height:20px;color:var(--accent);flex:none;transform:translateY(-1px)}
+.titres{min-width:0}
+.wordmark{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;
+  font-size:.98rem;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.wordmark b{font-weight:600}
+.sous{font-size:.66rem;letter-spacing:.09em;color:var(--sourd);margin-top:1px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+
+.ctl{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.ic{appearance:none;background:transparent;border:0;color:var(--sourd);
+  width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:color .15s,background .15s;text-decoration:none}
+.ic:hover{color:var(--encre);background:var(--accent-doux)}
+.ic:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ic:disabled{opacity:.28;cursor:default;background:none}
+.ic svg{width:17px;height:17px}
+.sep{width:1px;height:18px;background:var(--ligne);margin:0 6px}
+
+input[type=date]{appearance:none;-webkit-appearance:none;background:transparent;
+  border:0;border-bottom:1px solid transparent;color:var(--encre);border-radius:0;
+  padding:4px 2px;font:inherit;font-variant-numeric:tabular-nums;cursor:pointer;
+  transition:border-color .15s;max-width:130px}
+input[type=date]:hover,input[type=date]:focus{border-bottom-color:var(--accent);outline:none}
+input[type=date]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer}
+
+.chips{display:flex;gap:4px;margin:0 4px}
+.chip{padding:3px 10px;border-radius:999px;border:0;background:transparent;
+  font-size:.72rem;letter-spacing:.02em;color:var(--sourd);cursor:pointer;transition:all .15s}
+.chip:hover{color:var(--encre);background:var(--accent-doux)}
+.chip.actif{background:var(--accent-doux);color:var(--accent);font-weight:600}
+
+/* ---------- contenu ---------- */
+#message{padding:6px clamp(14px,3vw,28px);font-size:.76rem;color:var(--sourd);
+  display:none;border-bottom:1px solid var(--ligne);background:var(--carte)}
+#cadre{flex:1;border:0;width:100%;background:var(--fond)}
+
+/* ---------- panneau historique ---------- */
+#voile{position:fixed;inset:0;background:rgba(20,15,8,.28);opacity:0;
+  pointer-events:none;transition:opacity .22s;z-index:10}
+#voile.ouvert{opacity:1;pointer-events:auto}
+#panneau{position:fixed;top:0;right:0;height:100%;width:302px;max-width:88vw;
+  background:var(--carte);backdrop-filter:blur(22px) saturate(1.2);
+  -webkit-backdrop-filter:blur(22px) saturate(1.2);
+  border-left:1px solid var(--ligne);box-shadow:var(--ombre);z-index:20;
+  display:flex;flex-direction:column;
+  transform:translateX(105%);transition:transform .26s cubic-bezier(.32,.72,.28,1)}
+#panneau.ouvert{transform:none}
+.p-tete{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(12px + env(safe-area-inset-top)) 18px 10px;border-bottom:1px solid var(--ligne)}
+.p-titre{font-family:Georgia,serif;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase}
+#liste{overflow:auto;flex:1;padding:4px 0 12px;overscroll-behavior:contain}
+.mois{position:sticky;top:0;padding:12px 18px 5px;font-size:.64rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--sourd);background:inherit;backdrop-filter:blur(22px)}
+#liste a{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:7px 18px;color:var(--encre);text-decoration:none;font-size:.85rem;
+  border-left:2px solid transparent;transition:background .12s}
+#liste a:hover{background:var(--accent-doux)}
+#liste a.actif{border-left-color:var(--accent);color:var(--accent);font-weight:600}
+#liste .lbl{color:var(--sourd);font-size:.7rem;white-space:nowrap}
+.p-pied{padding:10px 18px calc(12px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--ligne);font-size:.68rem;color:var(--sourd);line-height:1.5}
+
+@media (max-width:660px){
+  .sous{display:none}
+  .wordmark{font-size:.88rem;letter-spacing:.12em}
+  header{gap:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marque" title="Vesta Almanach — bilans climatiques de la maison">
+    <svg class="flamme" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12.6 2.2c.5 3.9-4.9 6.6-4.9 11a4.9 4.9 0 0 0 9.8 0c0-1.7-.7-3.2-1.7-4.6-.5 1-1.2 1.9-2.2 2.5.5-2.7-.1-6.1-1-8.9z"/>
+    </svg>
+    <div class="titres">
+      <div class="wordmark">Vesta <b>Almanach</b></div>
+      <div class="sous">Bilan climatique de la maison · Trilport</div>
+    </div>
+  </div>
+
+  <nav class="ctl" aria-label="Navigation dans les bilans">
+    <button class="ic" id="prec" title="Bilan précédent (←)" aria-label="Bilan précédent">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <input type="date" id="datePick" title="Choisir une date" aria-label="Choisir une date">
+    <button class="ic" id="suiv" title="Bilan suivant (→)" aria-label="Bilan suivant">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <span class="chips" id="variantes"></span>
+    <span class="sep"></span>
+    <a class="ic" id="dlMd" download title="Télécharger le rapport complet (.md)" aria-label="Télécharger le rapport complet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+    </a>
+    <button class="ic" id="histo" title="Historique" aria-label="Ouvrir l'historique">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+    </button>
+  </nav>
+</header>
+
+<div id="message" role="status"></div>
+<iframe id="cadre" title="Bilan affiché"></iframe>
+
+<div id="voile"></div>
+<aside id="panneau" aria-label="Historique des bilans">
+  <div class="p-tete">
+    <span class="p-titre">Almanach</span>
+    <button class="ic" id="fermer" title="Fermer (Échap)" aria-label="Fermer l'historique">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div id="liste"></div>
+  <div class="p-pied"><span id="compte"></span> · relevés quotidiens, copies anonymisées.<br>Le fichier .md est le rapport scientifique complet.</div>
+</aside>
+
+<script>
+let MAN=[], courant=null;
+const $=id=>document.getElementById(id);
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const JOURS=['dim','lun','mar','mer','jeu','ven','sam'];
+
+function frCourt(d){const[a,m,j]=d.split('-');const dt=new Date(d+'T12:00:00');
+  return JOURS[dt.getDay()]+' '+(+j)+' '+MOIS[+m-1].slice(0,4)+'.';}
+function frLong(d){const[a,m,j]=d.split('-');return (+j)+' '+MOIS[+m-1]+' '+a;}
+
+function charge(){
+  fetch('manifest.json?t='+Date.now()).then(r=>r.json()).then(m=>{
+    MAN=m.dates;
+    if(!MAN.length){msg('Aucun bilan publié pour le moment.');return;}
+    const dp=$('datePick'); dp.min=MAN[0].date; dp.max=MAN[MAN.length-1].date;
+    construireListe();
+    afficheDate(MAN[MAN.length-1].date);
+  }).catch(()=>msg('Historique inaccessible — servir la page via un serveur web.'));
+}
+const entree=d=>MAN.find(x=>x.date===d);
+const idx=d=>MAN.findIndex(x=>x.date===d);
+function msg(t){$('message').textContent=t||'';$('message').style.display=t?'block':'none';}
+
+function afficheDate(date, cleVar){
+  let e=entree(date), note='';
+  if(!e){
+    const avant=[...MAN].reverse().find(x=>x.date<date), apres=MAN.find(x=>x.date>date);
+    e=avant||apres;
+    note='Pas de bilan le '+frLong(date)+' — affichage du plus proche : '+frLong(e.date)+'.';
+  }
+  courant={date:e.date, run:e.runs.find(r=>r.cle===cleVar)||e.runs[0]};
+  $('datePick').value=e.date;
+  msg(note);
+  $('cadre').src=courant.run.html+'?t='+Date.now();
+  $('dlMd').href=courant.run.md||'';
+  $('dlMd').style.display=courant.run.md?'':'none';
+  const i=idx(e.date);
+  $('prec').disabled=(i<=0); $('suiv').disabled=(i>=MAN.length-1);
+  const v=$('variantes'); v.innerHTML='';
+  if(e.runs.length>1){e.runs.forEach(r=>{
+    const c=document.createElement('button');
+    c.className='chip'+(r===courant.run?' actif':'');
+    c.textContent=r.label;
+    c.onclick=()=>afficheDate(e.date,r.cle);
+    v.appendChild(c);});}
+  document.querySelectorAll('#liste a').forEach(a=>a.classList.toggle('actif',a.dataset.date===e.date));
+  document.title='Vesta Almanach — '+frLong(e.date);
+}
+
+function construireListe(){
+  const L=$('liste'); L.innerHTML='';
+  let moisCourant='';
+  [...MAN].reverse().forEach(d=>{
+    const [a,m]=d.date.split('-'), cle=a+'-'+m;
+    if(cle!==moisCourant){
+      moisCourant=cle;
+      const h=document.createElement('div'); h.className='mois';
+      h.textContent=MOIS[+m-1]+' '+a; L.appendChild(h);
+    }
+    const el=document.createElement('a'); el.href='#'; el.dataset.date=d.date;
+    el.innerHTML='<span>'+frCourt(d.date)+'</span><span class="lbl">'+d.runs.map(r=>r.label).join(' · ')+'</span>';
+    el.onclick=ev=>{ev.preventDefault();afficheDate(d.date);panneau(false);};
+    L.appendChild(el);
+  });
+  $('compte').textContent=MAN.length+' journées';
+}
+
+function panneau(on){$('panneau').classList.toggle('ouvert',on);$('voile').classList.toggle('ouvert',on);}
+$('histo').onclick=()=>panneau(true);
+$('fermer').onclick=()=>panneau(false);
+$('voile').onclick=()=>panneau(false);
+$('prec').onclick=()=>{const i=idx(courant.date); if(i>0)afficheDate(MAN[i-1].date);};
+$('suiv').onclick=()=>{const i=idx(courant.date); if(i<MAN.length-1)afficheDate(MAN[i+1].date);};
+$('datePick').onchange=ev=>afficheDate(ev.target.value);
+addEventListener('keydown',ev=>{
+  if(ev.target.tagName==='INPUT')return;
+  if(ev.key==='Escape')panneau(false);
+  if(ev.key==='ArrowLeft'&&!$('prec').disabled)$('prec').click();
+  if(ev.key==='ArrowRight'&&!$('suiv').disabled)$('suiv').click();
+});
+charge();
+</script>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bilan climatique — visuels</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+ --bg:#0f1418; --panel:#161d23; --ink:#e8edf1; --muted:#8fa3b0; --line:#26313a;
+ --accent:#4aa3df; --warm:#e8743b; --cool:#3db2a0; --hot:#d9455f; --ok:#3fb56b;
+ --warn:#e5b23c; --grid:#222c34;
+ }
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--bg);color:var(--ink);
+ font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
+ header h1{margin:0 0 4px;font-size:22px;letter-spacing:.2px}
+ header.sub{color:var(--muted);font-size:13.5px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+ padding:18px 20px;margin:18px 0}
+.panel h2{margin:0 0 2px;font-size:16px}
+.panel.lead{color:var(--muted);font-size:13px;margin:0 0 14px}
+.chartbox{position:relative;height:340px}
+.chartbox.tall{height:380px}
+.legendrow{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:10px}
+.legendrow.k{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:4px;border-radius:2px;display:inline-block}
+ /* gradient thermometers */
+.grad{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.zcol{flex:1 1 90px;min-width:80px;text-align:center}
+.therm{height:150px;background:linear-gradient(#0000,#0000);position:relative;
+ border-radius:8px;border:1px solid var(--line);overflow:hidden;display:flex;align-items:flex-end}
+.fill{width:100%;border-radius:0}
+.zname{font-size:12.5px;margin-top:6px}
+.zval{font-size:12px;color:var(--muted)}
+.floortag{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.gradnote{margin-top:12px;font-size:13px;color:var(--muted)}
+.badgeK{display:inline-block;background:#1d2730;border:1px solid var(--line);
+ border-radius:20px;padding:3px 11px;color:var(--ink);font-weight:600}
+ /* battery */
+.batgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+ @media(max-width:640px){.batgrid{grid-template-columns:1fr}}
+.bar{height:26px;background:#111820;border:1px solid var(--line);border-radius:8px;
+ position:relative;overflow:hidden;margin:6px 0 2px}
+.bar>span{position:absolute;top:0;bottom:0;left:0;border-radius:7px}
+.barlab{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between}
+.verdict{margin-top:14px;padding:10px 12px;border-left:3px solid var(--accent);
+ background:#131b22;border-radius:0 8px 8px 0;font-size:13.5px}
+ /* battery v3 — équation + barre de décharge + lentille pièces */
+.bkpi{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:2px 0 24px}
+.bkpi.card{flex:1 1 140px;background:#131a20;border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.bkpi.card.lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.bkpi.card.val{font-size:23px;font-weight:600;margin-top:4px;line-height:1.1}
+.bkpi.card.rng{font-size:11.5px;color:var(--muted);margin-top:3px}
+.bkpi.card.out.val{color:var(--cool)}
+.bkpi.card.stay{border-color:#6a5320;background:#20180b}
+.bkpi.card.stay.val{color:var(--warm)}
+.bkpi.op{align-self:center;font-size:20px;color:var(--muted);padding:0 1px}
+ @media(max-width:640px){.bkpi.op{display:none}.bkpi.card{flex:1 1 100%}}
+.ebar{position:relative;height:44px;background:#111820;border:1px solid var(--line);
+ border-radius:9px;overflow:hidden}
+.ebar.seg{position:absolute;top:0;bottom:0}
+.ebar.stays{background:var(--warm)}
+.ebar.leaves{background:var(--cool);
+ background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.20) 0 2px,transparent 2px 12px);
+ background-size:24px 100%;animation:flow 1.15s linear infinite}
+ @keyframes flow{to{background-position:24px 0}}
+.ebar.surp{position:absolute;top:6px;bottom:6px;border:1.5px dashed var(--cool);border-radius:5px}
+.ebar.tip{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);border-radius:2px}
+.eticks{position:relative;height:15px;margin-top:5px;font-size:11px;color:var(--muted)}
+.eticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ebracket{position:relative;height:28px;margin-top:3px}
+.ebracket.br{position:absolute;top:0;height:7px;border:1px solid var(--warm);border-top:0;border-radius:0 0 4px 4px}
+.ebracket.lb{position:absolute;top:10px;transform:translateX(-50%);font-size:11px;color:var(--warm);white-space:nowrap}
+.roomlens{margin-top:20px;border:1px solid var(--line);border-radius:10px;
+ background:linear-gradient(90deg,rgba(61,178,160,.14),rgba(232,116,59,.14));padding:24px 18px 16px;position:relative}
+.roomlens.cap{position:absolute;top:9px;left:16px;font-size:11px;color:var(--muted)}
+.roomlens.track{position:relative;height:2px;background:rgba(255,255,255,.18);margin:36px 0 30px}
+.roomlens.rm{position:absolute;top:-4px}
+.roomlens.rm.dot{position:absolute;left:0;top:0;transform:translateX(-50%);width:9px;height:9px;border-radius:50%}
+.roomlens.rm.rl{position:absolute;left:0;transform:translateX(-50%);white-space:nowrap;font-size:10.5px;color:var(--ink)}
+.roomlens.rm.up.rl{bottom:13px}
+.roomlens.rm.down.rl{top:14px}
+.roomlens.ends{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted)}
+ /* battery v4 — deux lectures + waterfall */
+.vtag{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+ border-top:1px solid var(--line);padding-top:13px;margin-bottom:13px}
+.bkpi.card.gain{border-color:#6a5320}
+.bkpi.card.gain.val{color:var(--warm)}
+.wfwrap{margin:4px 0 6px}
+.wf{display:grid;grid-template-columns:138px 1fr;gap:10px;align-items:center;margin:6px 0}
+.wf.wlab{font-size:12px;color:var(--muted);text-align:right}
+.wf.wbar{position:relative;height:22px;background:#111820;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.wf.wseg{position:absolute;top:0;bottom:0;border-radius:4px}
+.wf.wval{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--ink)}
+.wf.wm{background:#4a6b7a}
+.wf.wg{background:var(--warm);background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.18) 0 2px,transparent 2px 11px)}
+.wf.wn{background:var(--cool);background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.18) 0 2px,transparent 2px 12px);background-size:22px 100%;animation:flow 1.15s linear infinite}
+.wf.wr{background:var(--warm)}
+.vnote{font-size:12.5px;color:var(--muted);margin-top:8px}
+ /* battery v5 — barre cumulative unique + repère "maintenant" */
+.ebwrap{position:relative;margin:32px 0 26px}
+.ebar.acq{background:var(--warm)}
+.ebar.tocome{background:var(--warm);opacity:.42;
+ background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.22) 0 2px,transparent 2px 11px)}
+.ebar.released{background:rgba(61,178,160,.50);
+ background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.16) 0 2px,transparent 2px 12px);
+ background-size:22px 100%;animation:flow 1.15s linear infinite}
+.ebar.mnow{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);border-radius:2px}
+.ebar.mrest{position:absolute;top:0;bottom:0;border-left:2px dashed #ffd9a0}
+.emk{position:absolute;transform:translateX(-50%);font-size:11px;white-space:nowrap}
+.emk-now{top:-19px;color:var(--ink)}
+.emk-rest{bottom:-19px;color:var(--warm)}
+ /* room lens linéaire — étiquettes 2 lignes + Humidex */
+.roomlens.tall{padding:32px 18px 20px}
+.roomlens.tall.track{margin:48px 0 44px}
+.roomlens.rm.rl b{display:block;font-weight:600}
+.roomlens.rm.rl.rsub{display:block;font-size:9.5px;color:var(--muted);margin-top:1px}
+ /* stratification SVG (axe température bleu→rouge, lignes de rappel) */
+.roomsvg{width:100%;height:auto;display:block;margin:8px 0 2px}
+.roomsvg text.rn{fill:var(--ink);font-weight:600}
+.roomsvg text.rs{fill:var(--muted)}
+.roomsvg text.end{fill:var(--muted)}
+.strlegend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}
+.strlegend.k{display:inline-flex;align-items:center;gap:7px}
+ /* hero — état + action */
+.hero{border-radius:14px;padding:16px 20px;margin:6px 0 4px;border:1px solid var(--line);background:var(--panel)}
+.hero-act{border-left:5px solid var(--hot)}.hero-watch{border-left:5px solid var(--warn)}.hero-ok{border-left:5px solid var(--ok)}
+.hero-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.hero-dot{width:11px;height:11px;border-radius:50%}
+.hero-act.hero-dot{background:var(--hot);box-shadow:0 0 0 4px rgba(217,69,95,.18)}
+.hero-watch.hero-dot{background:var(--warn);box-shadow:0 0 0 4px rgba(229,178,60,.18)}
+.hero-ok.hero-dot{background:var(--ok);box-shadow:0 0 0 4px rgba(63,181,107,.18)}
+.hero-state{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.hero-action{font-size:19px;font-weight:600;line-height:1.28}
+.hero-why{font-size:13.5px;color:var(--muted);margin-top:5px}
+ /* tuiles confiance: confort / santé / impact */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:10px 0 4px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.tile.tlab{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.tile.tval{font-size:19px;font-weight:600;margin:5px 0 3px}
+.tile.tsub{font-size:11.5px;color:var(--muted);line-height:1.42}
+.tile.th-bad{border-color:#5a2230}.tile.th-bad.tval{color:var(--hot)}
+.tile.th-warn{border-color:#5a4718}.tile.th-warn.tval{color:var(--warn)}
+.tile.th-good.tval{color:var(--ok)}.tile.th-ok.tval{color:var(--ok)}
+ /* batterie interactive — curseur + scénario */
+.ebctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+.ebc-lab{font-size:12px;color:var(--muted)}.ebc-lab b{color:var(--ink)}
+.ebctrl input[type=range]{flex:1 1 220px;accent-color:var(--warm);height:4px}
+.ebtoggle{background:#13202a;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:12.5px;cursor:pointer}
+.ebtoggle.off{color:var(--hot);border-color:#5a2230}
+.ebwarn{margin-top:12px;font-size:12.5px;color:var(--hot);display:none}
+ /* contract */
+.ccols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+ @media(max-width:820px){.ccols{grid-template-columns:1fr}}
+.ccard{background:#131a20;border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.ccard h3{margin:0 0 9px;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.item{display:flex;gap:8px;margin:9px 0;font-size:13px;align-items:flex-start}
+.chk{flex:0 0 15px;height:15px;margin-top:2px;border:1.5px solid var(--muted);border-radius:4px}
+.item.dl{color:var(--muted);font-size:11.5px}
+.st{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:20px;margin-top:3px}
+.st.hyp{background:#3a2e12;color:var(--warn);border:1px solid #5a4718}
+.st.val{background:#123020;color:var(--ok);border:1px solid #1c4a31}
+.st.chk2{background:#2a2030;color:#c79be0;border:1px solid #46335a}
+.prio-haute{border-left:3px solid var(--hot);padding-left:8px}
+.prio-moyenne{border-left:3px solid var(--warn);padding-left:8px}
+.foot{color:var(--muted);font-size:12px;text-align:center;margin-top:26px}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header>
+ <h1>🌡️ Bilan climatique — visuels scientifiques</h1>
+ <div class="sub" id="subhead"></div>
+ </header>
+ <div id="root"></div>
+ <div class="foot">Compagnon interactif du rapport texte · généré le 2026-07-08 07:02 · survolez les courbes pour les valeurs.</div>
+</div>
+
+<script>
+const PAYLOAD = {"d": {"date": "2026-07-08", "weekday": "mercredi", "time": "06:52", "context": "La fenêtre fraîche se referme. Nuit 07→08 enfin froide (min 16,2 °C) = la DERNIÈRE: dès ce soir les minima ne redescendent plus sous ~20 °C. RDC bien purgé (Living 19,3 °C, CO₂ chambre 553 ✅); étage délesté ~1 K mais Velux resté bridé à 7 %. Prévision RE-HAUSSÉE: pic décalé à lun 13/07 (38,2 °C, nouveau max), cœur chaud 11→13 ≥ 36 °C, nuits tropicales dès ce soir. Bascule du régime free-cooling vers inertie + fermeture diurne.", "sun": {"rise": "05:57", "set": "21:48"}, "o3_threshold": 100, "headline": {"level": "watch", "state": "Vigilance · dernier flush frais, puis bascule de régime", "action": "Ouvrir le Velux bureau à 100 % (actuellement 7 %) + garder le traversant RDC → flush MAINTENANT (fenêtre courte), sceller vers 9-10h, purge modeste ce soir dès ~23h. À partir de ce soir: régime inertie + fermeture diurne.", "why": "16-17 °C dehors vs 25-26 °C à l'étage, O₃ bas ce matin — mais la T monte vite (27 °C à 9h) et l'O₃ franchit 100 à midi. C'était la dernière nuit fraîche: dès ce soir les minima ≥ 20 °C ferment le free-cooling."}, "system_health": {"last_purge": "partielle", "detail": "Nuit 07→08: RDC de nouveau bien purgé (traversant Living 100 %, Living 19,3 °C, CO₂ chambre 553 ✅ revenu à la normale vs 716 hier). Étage légèrement délesté (Chambre étage 27,1→25,8, gradient +8,4→+6,5 K) MAIS le Velux est resté à 7 %: le seul verrou identifié n'a pas été levé — et c'était la dernière nuit fraîche pour une purge profonde.", "sensors_hs": ["SdB 0E56"], "reliability": "Modèle calé sur ~11 nuits · RDC fiable (κ≈140, τ 11-15 h) · τ_étage sur nuit isolée toujours non mesuré (10ᵉ tentative manquée, Velux jamais ouvert — fenêtre fraîche désormais fermée)"}, "open_windows": [{"label": "Maintenant → ~9h: DERNIER flush frais (ext 16-17 °C < tout, O₃ bas) — ouvrir le Velux à fond + traversant + updraft", "start": 6, "end": 9}, {"label": "~23h → matin: purge MODESTE (ext repasse sous l'étage ~25 °C, O₃ retombé) — ΔT ~5-6 K seulement, ~5-8 kWh", "start": 23, "end": 24}], "hours": ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"], "t_ext_today": [19.4, 17.9, 16.8, 16.2, 16.4, 16.9, 18.5, 21.4, 24.3, 26.8, 28.9, 30.6, 31.9, 32.8, 33.1, 33.6, 33.2, 33.2, 32.4, 31.3, 29.3, 27.7, 26.4, 24.9], "o3_today": [45, 42, 40, 38, 35, 36, 44, 50, 57, 71, 86, 99, 108, 110, 108, 107, 109, 109, 102, 96, 85, 78, 69, 68], "compare": [{"date": "08/07 (mer)", "t": [19.4, 17.9, 16.8, 16.2, 16.4, 16.9, 18.5, 21.4, 24.3, 26.8, 28.9, 30.6, 31.9, 32.8, 33.1, 33.6, 33.2, 33.2, 32.4, 31.3, 29.3, 27.7, 26.4, 24.9]}, {"date": "10/07 (ven)", "t": [23.1, 22.1, 21.3, 20.6, 19.7, 20.1, 22.2, 24.4, 26.9, 29.3, 31.4, 32.7, 33.6, 34.3, 34.7, 34.8, 34.6, 33.9, 32.9, 31.3, 28.7, 26.9, 25.3, 23.9]}, {"date": "13/07 (lun · pic)", "t": [24.9, 23.7, 22.7, 22.3, 22.4, 22.9, 24.2, 26.4, 29.3, 31.9, 33.9, 35.7, 37.0, 37.8, 38.2, 38.0, 37.3, 36.2, 34.8, 33.0, 30.9, 29.1, 27.7, 26.5]}], "zones": [{"name": "Living", "floor": "RDC", "t": 19.3, "hr": 60, "humidex": 21.2, "note": "le plus frais ✅ — traversant ouvert, air plus sec que dehors"}, {"name": "SdB", "floor": "RDC", "t": 21.1, "hr": 57, "humidex": 23.5, "note": "capteur 0E56 HS"}, {"name": "Salon", "floor": "RDC", "t": 21.5, "hr": 58, "humidex": 24.2, "note": ""}, {"name": "Réserve", "floor": "RDC", "t": 22.1, "hr": 56, "humidex": 24.8, "note": "chaudière · RAS"}, {"name": "Chambre", "floor": "RDC", "t": 23.4, "hr": 50.3, "humidex": 25.9, "note": "CO₂ 553 ppm ✅ (renouvellement normal)"}, {"name": "Cuisine", "floor": "RDC", "t": 23.8, "hr": 50, "humidex": 26.4, "note": ""}, {"name": "Bureau", "floor": "Étage", "t": 23.9, "hr": 49, "humidex": 26.4, "note": "point chaud, partiellement délesté (BME680 24,6)"}, {"name": "Chambre étage", "floor": "Étage", "t": 25.8, "hr": 44.3, "humidex": 28.4, "note": "le plus haut — bridé par le Velux (7 %)"}, {"name": "Patio", "floor": "Ext", "t": 16.2, "hr": 75, "humidex": null, "note": "réf. maison (Meaux 16,9)"}], "gradient_k": 6.5, "battery": {"residual_kwh": [11, 17], "night_capacity_kwh": [5, 8], "day_gain_kwh": [10, 15], "power_kw": [0.8, 1.0], "verdict": "Charge résiduelle ~11-17 kWh, concentrée à l'étage (RDC quasi reset). Aujourd'hui DH₂₆ = 67 K·h (pic 33,6 °C, après-midi sec) → recharge diurne ~10-15 kWh si scellé à temps. MAIS la nuit ne rend presque plus: ext min ~20 °C (vs 16 la nuit passée), ΔT 5-6 K, P≈0,8 kW → ~5-8 kWh seulement. La fenêtre de free-cooling s'est effondrée d'une nuit à l'autre; dès ce soir l'inertie meulière prend le relais."}, "calibration": [{"night": "04→05", "d_etage": -1.3, "tau": null, "config": "traversant ouest manquant · Velux seul", "quality": "RDC propre / étage bridé (7ᵉ ép.)", "rdc_clean": -4.7}, {"night": "05→06", "d_etage": -0.8, "tau": null, "config": "fenêtre est 50 % · Living/SO/Velux fermés", "quality": "partielle (8ᵉ ép., CO₂ 561)", "rdc_clean": null}, {"night": "06→07", "d_etage": 1.7, "tau": null, "config": "traversant RDC ouvert 100 % · Velux bridé 6 %", "quality": "RDC purgé net / étage RECHARGÉ (9ᵉ ép., verrou = Velux)", "rdc_clean": -1.3}, {"night": "07→08", "d_etage": -1.3, "tau": null, "config": "traversant RDC 100 % · Velux ENCORE bridé 7 % · dernière nuit fraîche (16 °C)", "quality": "partielle — étage délesté ~1 K mais Velux jamais ouvert (10ᵉ ép., τ non mesuré)", "rdc_clean": null}], "engagements": {"taches": [{"txt": "MAINTENANT (ext 16-17 °C, O₃ 36): ouvrir le VELUX bureau à 100 % (actuellement 7 %) + garder traversant RDC + ventilos updraft — flush maximal, fenêtre TRÈS courte (24 °C dès 8h)", "deadline": "07:30", "prio": "haute"}, {"txt": "SCELLER vers 9-10h: volets ouest + rideaux Living + Velux avant la chaleur (29 °C dès 10h) et l'ozone (> 100 dès midi, pic 110 à 13h)", "deadline": "10:00", "prio": "haute"}, {"txt": "Ce soir dès ~23h: rouvrir pour purge modeste (ext repasse < étage, O₃ ok). Porte chambre entrebâillée", "deadline": "23:00", "prio": "moyenne"}, {"txt": "BASCULER en régime inertie + fermeture diurne stricte dès ce soir: les nuits ne rendent plus (min ≥ 20 °C dès 08→09)", "deadline": "2026-07-08", "prio": "haute"}, {"txt": "FIABILISER Velux + chaîne volets Living AVANT sam 11: ce sera le seul levier d'aération nocturne pendant la vague (11→13, pic 38,2 °C lun 13)", "deadline": "2026-07-11", "prio": "haute"}], "decisions": ["Run du MATIN: nuit 07→08 = 10ᵉ épisode. RDC purgé net (Living 19,3 °C, CO₂ chambre 553 ✅); étage délesté ~1 K malgré Velux bridé 7 % (traversant + nuit à 16 °C). τ_étage toujours non mesuré, et la fenêtre fraîche est désormais fermée.", "DH₂₆ jour = 67 K·h / DH₂₈ = 42 (pic 33,6 °C, après-midi sec HR 28 %). Recharge diurne ~10-15 kWh si scellé à temps.", "Bascule de régime: free-cooling effondré (nuit 08→09 min ~20 °C, ~5-8 kWh vs ~10 la nuit passée). La priorité passe de la purge nocturne à l'inertie + fermeture diurne.", "Chaudière VScotHO1 RAS: bouilleur 38,0 = départ 38,0 (cohérents); ballon ECS 28,9 = creux de cycle normal."], "interpretations": [{"txt": "Verrou étage = le Velux (CONFIRMÉ): cette nuit encore, traversant ouvert + nuit à 16 °C, l'étage n'a cédé que ~1 K car l'exutoire haut (Velux 7 %) plafonne le tirage. Ouvert, la même nuit aurait rendu 3-4 K.", "statut": "validé"}, {"txt": "Prévision RE-HAUSSÉE et décalée: le pic passe de sam 11 (36,4) à lun 13 (38,2 °C, nouveau max); cœur chaud allongé à 3 jours (11-13 tous ≥ 36 °C). Nuits tropicales dès ce soir (min ~20 °C) → fenêtre de free-cooling refermée.", "statut": "à vérifier"}, {"txt": "Bascule stratégique: à partir de ce soir, la défense n'est plus le free-cooling (nuits trop chaudes) mais l'inertie meulière du RDC (vider le matin, sceller le jour) + empêcher l'étage de se recharger.", "statut": "validé"}, {"txt": "Chaîne des volets Living: 2ᵉ matin consécutif à 100 % au réveil — l'incohérence cover=0 semble levée. À fiabiliser (avec le Velux) avant le 11.", "statut": "hypothèse — à confirmer"}, {"txt": "Updraft = solution du blocage étage (validé le 03/07: Bureau 22,9 <23 / Chambre étage 23,8 <24).", "statut": "validé"}, {"txt": "Humidité: intérieur (8,3-9,2 g/kg) ≈ extérieur (8,5), Living plus sec que dehors, aucune source interne ni condensation.", "statut": "validé"}]}}, "panels": {"curve_txo3": true, "gradient": true, "calibration": true, "battery": true, "compare": true, "contract": true}};
+const D = PAYLOAD.d, P = PAYLOAD.panels;
+const root = document.getElementById('root');
+document.getElementById('subhead').textContent =
+ `Trilport · ${D.weekday||''} ${D.date} ${D.time?('· '+D.time+' CEST'):''} · ${D.context||''}`;
+
+Chart.defaults.color = '#8fa3b0';
+Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+Chart.defaults.borderColor = '#222c34';
+
+function panel(title, lead){
+ const p = document.createElement('div'); p.className='panel';
+ const h=document.createElement('h2'); h.textContent=title; p.appendChild(h);
+ if(lead){const l=document.createElement('p'); l.className='lead'; l.textContent=lead; p.appendChild(l);}
+ root.appendChild(p); return p;
+}
+function tempColor(t){ // scientific-ish scale 10→32°C cool→hot
+ const x=Math.max(0,Math.min(1,(t-14)/(30-14)));
+ const c=[ [61,178,160],[74,163,223],[232,178,60],[217,69,95] ];
+ const seg=x*3, i=Math.min(2,Math.floor(seg)), f=seg-i;
+ const a=c[i], b=c[i+1];
+ return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+}
+
+/* ---- 0. Bandeau état + action, puis bande confiance (confort · santé · impact) ---- */
+(function(){
+ // Bandeau hero — seulement si une consigne est fournie (sinon on n'affiche rien)
+ const hl=D.headline;
+ if(hl && hl.action){
+ const cls={action:'hero-act',watch:'hero-watch',ok:'hero-ok'}[hl.level]||'hero-ok';
+ const hero=document.createElement('div'); hero.className='hero '+cls;
+ hero.innerHTML='<div class="hero-top"><span class="hero-dot"></span><span class="hero-state">'+(hl.state||'')+'</span></div>'
+ +'<div class="hero-action">'+hl.action+'</div>'
+ +(hl.why?'<div class="hero-why">'+hl.why+'</div>':'');
+ root.appendChild(hero);
+ }
+
+ const tiles=[];
+ // confort ressenti (dérivé de l'Humidex des zones — toujours disponible)
+ const zc=(D.zones||[]).filter(z=>z.floor==='RDC'||z.floor==='Étage');
+ let worst=null; zc.forEach(z=>{ if(z.humidex!=null && (worst===null||z.humidex>worst.humidex)) worst=z; });
+ if(worst){
+ const hxLab=h=>h<29?'Confortable':(h<35?'Inconfort léger':(h<40?'Inconfort marqué':'Lourd'));
+ const cOk=worst.humidex<29;
+ tiles.push('<div class="tile th-'+(cOk?'good':'warn')+'"><div class="tlab">Confort ressenti</div>'
+ +'<div class="tval">'+hxLab(worst.humidex)+'</div>'
+ +'<div class="tsub">Humidex max '+worst.humidex+' ('+worst.name+')</div></div>');
+ }
+ // santé système: la purge d'hier a-t-elle eu lieu ? (seulement si renseigné)
+ const sh=D.system_health;
+ if(sh && sh.last_purge){
+ const okp={'réussie':'ok','partielle':'warn','manquée':'bad'}[sh.last_purge]||'warn';
+ tiles.push('<div class="tile th-'+okp+'"><div class="tlab">Purge de la nuit dernière</div>'
+ +'<div class="tval">'+sh.last_purge+'</div>'
+ +'<div class="tsub">'+(sh.detail||'')+'</div></div>');
+ }
+ // impact: clim évitée (dérivé de la capacité de purge — toujours disponible)
+ const nc=(D.battery&&D.battery.night_capacity_kwh)||null;
+ if(nc){
+ const ncC=(nc[0]+nc[1])/2, imp=D.impact||{}, cop=imp.cop||3, eurkwh=imp.eur_kwh||0.25, co2=imp.co2_kg_kwh||0.06, nights=imp.season_nights||90, elec=ncC/cop;
+ tiles.push('<div class="tile th-good"><div class="tlab">Économie de ce soir · clim évitée</div>'
+ +'<div class="tval">'+elec.toFixed(1)+' kWh · '+(elec*eurkwh).toFixed(2)+' €</div>'
+ +'<div class="tsub">≈ '+(elec*co2).toFixed(2)+' kg CO₂ évités · ~'+Math.round(elec*eurkwh*nights)+' € / '+Math.round(elec*co2*nights)+' kg sur l\'été (hyp. COP '+cop+')</div></div>');
+ }
+ if(tiles.length){ const strip=document.createElement('div'); strip.className='tiles'; strip.innerHTML=tiles.join(''); root.appendChild(strip); }
+})();
+
+/* ---- 1. Courbe 24h T_ext × Ozone ---- */
+if(P.curve_txo3){
+ const pan = panel('Courbe 24 h — Température extérieure × Ozone',
+ 'La décision d\'ouvrir/fermer les fenêtres. Bandes vertes = fenêtres d\'aération conseillées; ligne rouge = seuil OMS ozone 100 µg/m³.');
+ const box=document.createElement('div'); box.className='chartbox'; const cv=document.createElement('canvas');
+ box.appendChild(cv); pan.appendChild(box);
+ const leg=document.createElement('div'); leg.className='legendrow';
+ leg.innerHTML=`<span class="k"><span class="swatch" style="background:#e5624a"></span>T extérieure (°C)</span>
+ <span class="k"><span class="swatch" style="background:#4aa3df"></span>Ozone (µg/m³)</span>
+ <span class="k"><span class="swatch" style="background:#3fb56b;height:10px;opacity:.5"></span>fenêtre d\'aération</span>
+ <span class="k">☀ lever ${D.sun?D.sun.rise:''} · coucher ${D.sun?D.sun.set:''}</span>`;
+ pan.appendChild(leg);
+
+ const bands = (D.open_windows||[]).map(w=>({type:'box',xMin:w.start,xMax:w.end,
+ backgroundColor:'rgba(63,181,107,0.10)',borderWidth:0}));
+ // draw bands via a plugin (no annotation plugin dependency)
+ const bandPlugin={id:'bands',beforeDatasetsDraw(c){
+ const {ctx,chartArea:a,scales:{x}}=c; ctx.save();
+ (D.open_windows||[]).forEach(w=>{const x0=x.getPixelForValue(w.start),x1=x.getPixelForValue(w.end);
+ ctx.fillStyle='rgba(63,181,107,0.10)';ctx.fillRect(x0,a.top,x1-x0,a.bottom-a.top);});
+ // O3 threshold line
+ const yr=c.scales.y1; if(yr){const yy=yr.getPixelForValue(D.o3_threshold||100);
+ ctx.strokeStyle='rgba(217,69,95,0.8)';ctx.setLineDash([5,4]);ctx.beginPath();
+ ctx.moveTo(a.left,yy);ctx.lineTo(a.right,yy);ctx.stroke();ctx.setLineDash([]);}
+ ctx.restore();}};
+ new Chart(cv,{type:'line',
+ data:{labels:D.hours,datasets:[
+ {label:'T ext (°C)',data:D.t_ext_today,yAxisID:'y',borderColor:'#e5624a',
+ backgroundColor:'rgba(229,98,74,0.12)',fill:true,tension:.35,pointRadius:0,borderWidth:2.5},
+ {label:'Ozone (µg/m³)',data:D.o3_today,yAxisID:'y1',borderColor:'#4aa3df',
+ tension:.35,pointRadius:0,borderWidth:2}
+ ]},
+ options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+ plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label+' h'}}},
+ scales:{
+ x:{grid:{color:'#1d262d'},title:{display:true,text:'heure (CEST)'}},
+ y:{position:'left',title:{display:true,text:'°C'},grid:{color:'#1d262d'},suggestedMin:10,suggestedMax:32},
+ y1:{position:'right',title:{display:true,text:'µg/m³'},grid:{drawOnChartArea:false},suggestedMin:0,suggestedMax:140}
+ }},plugins:[bandPlugin]});
+}
+
+/* ---- 2. Stratification thermique — répartition des pièces (axe température bleu→rouge) ---- */
+if(P.gradient){
+ const pan=panel('Stratification thermique — répartition des pièces',
+ 'Chaque pièce placée sur un axe de température, de la plus fraîche à la plus chaude. On voit d\'un coup lesquelles se ressemblent et laquelle porte la chaleur — en amont, ça montre ce que la « batterie » agrège.');
+ const zin=(D.zones||[]).filter(z=>z.floor==='RDC'||z.floor==='Étage').slice().sort((a,b)=>a.t-b.t);
+ const tf=zin.length?zin[0].t:20, th=zin.length?zin[zin.length-1].t:26, n=zin.length;
+
+ function tcol(f){ f=Math.max(0,Math.min(1,f));
+ const s=[[59,130,196],[229,178,60],[217,69,95]];
+ const seg=f<0.5?0:1, t=f<0.5?f/0.5:(f-0.5)/0.5, a=s[seg], b=s[seg+1];
+ const c=a.map((v,i)=>Math.round(v+(b[i]-v)*t)); return 'rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+
+ const W=1000,H=200, xa=52, xb=948, axisY=150, span=xb-xa;
+ const X=f=>xa+f*span;
+ const lxRange=[70,930], LX=i=>n>1?lxRange[0]+(i/(n-1))*(lxRange[1]-lxRange[0]):(lxRange[0]+lxRange[1])/2;
+ let s='<svg class="roomsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">';
+ s+='<defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="0">'
+ +'<stop offset="0" stop-color="rgb(59,130,196)"/><stop offset="0.5" stop-color="rgb(229,178,60)"/><stop offset="1" stop-color="rgb(217,69,95)"/></linearGradient></defs>';
+ s+='<rect x="'+xa+'" y="'+(axisY-4)+'" width="'+span+'" height="8" rx="4" fill="url(#tg)" opacity="0.55"/>';
+ s+='<text class="end" x="'+xa+'" y="'+(axisY+26)+'" text-anchor="start" font-size="12">plus fraîche · '+tf.toFixed(1)+'°</text>';
+ s+='<text class="end" x="'+xb+'" y="'+(axisY+26)+'" text-anchor="end" font-size="12">plus chaude · '+th.toFixed(1)+'°</text>';
+ zin.forEach((z,i)=>{
+ const f=(th-tf)?(z.t-tf)/(th-tf):0.5, dx=X(f), lx=LX(i), col=tcol(f);
+ const anchor=(i===0?'start':(i===n-1?'end':'middle'));
+ s+='<path d="M '+lx+' 84 L '+dx+' '+(axisY-9)+'" stroke="#3a4650" stroke-width="1" fill="none"/>';
+ const ring=(z.floor==='Étage')?' stroke="#e8edf1" stroke-width="2.5"':' stroke="#0f1418" stroke-width="1.5"';
+ s+='<circle cx="'+dx+'" cy="'+axisY+'" r="6.5" fill="'+col+'"'+ring+'/>';
+ s+='<text class="rn" x="'+lx+'" y="58" text-anchor="'+anchor+'" font-size="13.5">'+z.name+'</text>';
+ s+='<text class="rs" x="'+lx+'" y="75" text-anchor="'+anchor+'" font-size="11.5">'+z.t.toFixed(1)+'° · Hx '+z.humidex+'</text>';
+ });
+ s+='</svg>';
+
+ const patio=(D.zones||[]).find(z=>z.floor==='Ext');
+ let html=s;
+ html+='<div class="strlegend">'
+ +'<span class="k"><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="#7a8894" stroke="#0f1418" stroke-width="1.5"/></svg>RDC</span>'
+ +'<span class="k"><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="#7a8894" stroke="#e8edf1" stroke-width="2.5"/></svg>Étage (contour clair)</span>'
+ +'<span class="k">couleur = température (bleu frais → rouge chaud)</span>'
+ +'</div>';
+ html+='<div class="gradnote">Écart RDC↔étage <span class="badgeK">'+D.gradient_k+' K</span> — la couche chaude sous toiture (Bureau, Chambre étage), à droite, est celle qui remplit la « batterie » du bâti.'
+ +(patio?' Réf. extérieure (patio) '+patio.t.toFixed(1)+'°.':'')+'</div>';
+ pan.insertAdjacentHTML('beforeend',html);
+}
+
+/* ---- 3. Frise décharge / calibration τ ---- */
+if(P.calibration){
+ const pan=panel('Frise de décharge nocturne — calibration τ',
+ 'Chaque barre = ΔT de l\'étage sur une nuit (négatif = décharge, tant mieux). Couleur = qualité de la config d\'ouvrants. τ annoté quand mesurable.');
+ const box=document.createElement('div'); box.className='chartbox'; const cv=document.createElement('canvas');
+ box.appendChild(cv); pan.appendChild(box);
+ const cal=D.calibration||[];
+ const qcol={ 'partielle':'#4aa3df','bridée':'#e5b23c','scellée':'#d9455f' };
+ const colors=cal.map(c=>{ if(c.quality&&c.quality.indexOf('propre')>=0) return '#3fb56b';
+ return qcol[c.quality]|| '#7e8b95'; });
+ const taus=cal.map(c=>c.tau);
+ const tauPlugin={id:'tau',afterDatasetsDraw(ch){const {ctx,scales:{x,y}}=ch;ctx.save();
+ ctx.fillStyle='#e8edf1';ctx.font='11px sans-serif';ctx.textAlign='center';
+ cal.forEach((c,i)=>{ if(c.tau){const px=x.getPixelForValue(i);const py=y.getPixelForValue(c.d_etage);
+ ctx.fillText('τ≈'+c.tau+'h',px,py-8);}
+ if(c.rdc_clean){const px=x.getPixelForValue(i);ctx.fillStyle='#3fb56b';
+ ctx.fillText('RDC '+c.rdc_clean+'K ✓',px,y.getPixelForValue(0)+16);ctx.fillStyle='#e8edf1';}});
+ ctx.restore();}};
+ new Chart(cv,{type:'bar',
+ data:{labels:cal.map(c=>c.night),datasets:[{label:'ΔT étage (K)',data:cal.map(c=>c.d_etage),
+ backgroundColor:colors,borderRadius:5,maxBarThickness:54}]},
+ options:{maintainAspectRatio:false,plugins:{legend:{display:false},
+ tooltip:{callbacks:{afterLabel:i=>'config: '+(cal[i.dataIndex].config||'')}}},
+ scales:{x:{grid:{display:false}},
+ y:{title:{display:true,text:'ΔT étage sur la nuit (K)'},grid:{color:'#1d262d'},suggestedMin:-6,suggestedMax:2}}},
+ plugins:[tauPlugin]});
+ const leg=document.createElement('div'); leg.className='legendrow';
+ leg.innerHTML=`<span class="k"><span class="swatch" style="background:#3fb56b"></span>mesure propre</span>
+ <span class="k"><span class="swatch" style="background:#4aa3df"></span>partielle</span>
+ <span class="k"><span class="swatch" style="background:#e5b23c"></span>bridée (débit)</span>
+ <span class="k"><span class="swatch" style="background:#d9455f"></span>scellée (aucune purge)</span>`;
+ pan.appendChild(leg);
+}
+
+/* ---- 4. Batterie thermique — barre cumulative unique (acquis + à venir = pic du soir) ---- */
+if(P.battery){
+ const b=D.battery||{};
+ const pan=panel('Batterie thermique du bâti',
+ 'Toute la charge du jour en une barre (100 % = pic du soir). Déplacez le curseur pour voir « maintenant » avancer dans la journée, ou testez « pas de purge ce soir » pour mesurer la dette de demain.');
+
+ const r=(b.residual_kwh||[0,0]), c=(b.night_capacity_kwh||[0,0]);
+ const gn=(b.day_gain_kwh||[0,0]);
+ const rC=(r[0]+r[1])/2, cC=(c[0]+c[1])/2, gC=(gn[0]+gn[1])/2, pk=(b.power_kw||[0,0]);
+ const eve=rC+gC; // pic du soir = 100 %
+ const rest=Math.max(0,eve-cC); // charge cumulative restant demain
+ const rLo=Math.max(0,(r[0]+gn[0])-c[1]), rHi=Math.max(0,(r[1]+gn[1])-c[0]);
+ const sc=eve>0?eve:1, p=v=>Math.max(0,Math.min(100,v/sc*100));
+
+ // équation numérique
+ let html='<div class="bkpi">'
+ +'<div class="card"><div class="lab">Charge ce matin</div><div class="val">'+rC.toFixed(1)+'</div><div class="rng">08h37 · '+r[0]+'–'+r[1]+' kWh</div></div>'
+ +'<div class="op">+</div>'
+ +'<div class="card gain"><div class="lab">À accumuler aujourd\'hui</div><div class="val">'+gC.toFixed(1)+'</div><div class="rng">prédit · '+gn[0]+'–'+gn[1]+' kWh</div></div>'
+ +'<div class="op">−</div>'
+ +'<div class="card out"><div class="lab">Purge de la nuit</div><div class="val">'+cC.toFixed(1)+'</div><div class="rng">à venir · '+c[0]+'–'+c[1]+' kWh · '+pk.join('–')+' kW</div></div>'
+ +'<div class="op">=</div>'
+ +'<div class="card stay"><div class="lab">Reste demain</div><div class="val">'+rest.toFixed(1)+'</div><div class="rng">'+Math.round(rLo)+'–'+Math.round(rHi)+' kWh</div></div>'
+ +'</div>';
+
+ // profil d'accumulation de la journée (pondéré par les degré-heures > 18 °C)
+ const tarr=D.t_ext_today||[];
+ function wsum(a,bb){ let s=0; for(let h=Math.ceil(a);h<=Math.floor(bb);h++){ if(h>=0&&h<tarr.length) s+=Math.max(0,tarr[h]-18);} return s; }
+ const tp=(D.time||'8:00').split(':'); const bilanH=(parseFloat(tp[0])||8)+((parseFloat(tp[1])||0)/60);
+ const hEnd=20, totW=wsum(bilanH,hEnd)||1;
+ function chargeAt(h){ if(h<=bilanH) return rC; return rC+gC*Math.min(1,Math.max(0,wsum(bilanH,h)/totW)); }
+ function fmtH(h){ return Math.floor(h)+'h'+('0'+Math.round((h%1)*60)).slice(-2); }
+
+ // barre cumulative unique (interactive)
+ html+='<div class="ebwrap">'
+ +'<div class="emk emk-now" id="eb-emknow" style="left:'+p(rC)+'%">'+fmtH(bilanH)+' · '+rC.toFixed(1)+'</div>'
+ +'<div class="ebar">'
+ +'<div class="seg acq" id="eb-acq" style="left:0;width:'+p(rC)+'%"></div>'
+ +'<div class="seg tocome" id="eb-tocome" style="left:'+p(rC)+'%;width:'+(100-p(rC))+'%"></div>'
+ +'<div class="seg released" id="eb-released" style="left:'+p(rest)+'%;width:'+(100-p(rest))+'%"></div>'
+ +'<div class="mrest" id="eb-mrest" style="left:'+p(rest)+'%"></div>'
+ +'<div class="mnow" id="eb-mnow" style="left:'+p(rC)+'%"></div>'
+ +'</div>'
+ +'<div class="emk emk-rest" id="eb-emkrest" style="left:'+p(rest)+'%">reste demain · '+rest.toFixed(1)+'</div>'
+ +'</div>';
+
+ html+='<div class="eticks"><span style="left:0">0</span>'
+ +(sc>6?'<span style="left:'+p(5)+'%">5</span>':'')
+ +(sc>11?'<span style="left:'+p(10)+'%">10</span>':'')
+ +'<span style="left:100%;transform:translateX(-100%)">soir '+eve.toFixed(1)+' kWh</span></div>';
+
+ // contrôles: curseur temporel + scénario
+ html+='<div class="ebctrl">'
+ +'<span class="ebc-lab">Heure du bilan <b id="eb-hour">'+fmtH(bilanH)+'</b></span>'
+ +'<input id="eb-scrub" type="range" min="'+bilanH.toFixed(2)+'" max="'+hEnd+'" step="0.25" value="'+bilanH.toFixed(2)+'">'
+ +'<button id="eb-scen" class="ebtoggle" type="button">Scénario: purge ce soir ✓</button>'
+ +'</div>';
+
+ html+='<div class="legendrow" style="margin-top:14px">'
+ +'<span class="k"><span class="swatch" style="background:var(--warm)"></span>déjà stocké</span>'
+ +'<span class="k"><span class="swatch" style="background:var(--warm);opacity:.5"></span>à accumuler</span>'
+ +'<span class="k"><span class="swatch" style="background:rgba(61,178,160,.7)"></span>libéré par la purge</span>'
+ +'<span class="k"><span class="swatch" style="background:var(--ink);width:3px;height:14px"></span>maintenant · <span class="swatch" style="border-top:2px dashed #ffd9a0;width:14px;height:0"></span>reste demain</span>'
+ +'</div>';
+
+ html+='<div class="ebwarn" id="eb-warn">⚠ Sans purge, le bâti garde toute la charge du soir (~'+eve.toFixed(1)+' kWh): demain démarre déjà chaud, et la dette s\'accumule sur la rampe de chaleur.</div>';
+
+ pan.insertAdjacentHTML('beforeend', html);
+
+ // câblage interactif
+ const $=s=>pan.querySelector(s);
+ const scrub=$('#eb-scrub'), scenBtn=$('#eb-scen'), hourEl=$('#eb-hour'),
+ acqEl=$('#eb-acq'), tocomeEl=$('#eb-tocome'), relEl=$('#eb-released'),
+ mnowEl=$('#eb-mnow'), mrestEl=$('#eb-mrest'), emkNow=$('#eb-emknow'), emkRest=$('#eb-emkrest'), warnEl=$('#eb-warn');
+ let scen=true;
+ function updBar(){
+ const h=parseFloat(scrub.value), nowC=chargeAt(h), pn=p(nowC);
+ acqEl.style.width=pn+'%'; tocomeEl.style.left=pn+'%'; tocomeEl.style.width=(100-pn)+'%';
+ mnowEl.style.left=pn+'%'; emkNow.style.left=pn+'%'; emkNow.textContent=fmtH(h)+' · '+nowC.toFixed(1);
+ hourEl.textContent=fmtH(h);
+ const reste=scen?rest:eve, pr=p(reste);
+ relEl.style.display=scen?'block':'none';
+ if(scen){ relEl.style.left=pr+'%'; relEl.style.width=(100-pr)+'%'; }
+ mrestEl.style.left=pr+'%'; emkRest.style.left=pr+'%'; emkRest.textContent='reste demain · '+reste.toFixed(1);
+ warnEl.style.display=scen?'none':'block';
+ }
+ scrub.addEventListener('input',updBar);
+ scenBtn.addEventListener('click',()=>{ scen=!scen;
+ scenBtn.textContent=scen?'Scénario: purge ce soir ✓':'Scénario: PAS de purge ✗';
+ scenBtn.classList.toggle('off',!scen); updBar(); });
+ updBar();
+
+ if(b.verdict){const v=document.createElement('div'); v.className='verdict'; v.textContent=b.verdict; pan.appendChild(v);}
+}
+
+/* ---- 5. Comparatif journalier superposé ---- */
+if(P.compare){
+ const pan=panel('Comparatif journalier superposé — trajectoire de la semaine',
+ 'Profils de température extérieure jour après jour, sur un axe 0–24 h commun: on lit d\'un coup le réchauffement et la journée clé.');
+ const box=document.createElement('div'); box.className='chartbox tall'; const cv=document.createElement('canvas');
+ box.appendChild(cv); pan.appendChild(box);
+ const cmp=D.compare||[];
+ const palette=['#3db2a0','#4aa3df','#e5b23c','#d9455f','#c79be0','#9aa7b0'];
+ const ds=cmp.map((c,i)=>({label:c.date,data:c.t,borderColor:palette[i%palette.length],
+ borderWidth: i===cmp.length-1?3:2, pointRadius:0, tension:.35,
+ borderDash: i===cmp.length-1?[]:[]}));
+ new Chart(cv,{type:'line',
+ data:{labels:D.hours,datasets:ds},
+ options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+ plugins:{legend:{position:'bottom'},tooltip:{callbacks:{title:i=>i[0].label+' h'}}},
+ scales:{x:{grid:{color:'#1d262d'},title:{display:true,text:'heure (CEST)'}},
+ y:{title:{display:true,text:'T extérieure (°C)'},grid:{color:'#1d262d'}}}}});
+}
+
+/* ---- 6. Contrat d'engagement ---- */
+if(P.contract){
+ const e=D.engagements||{};
+ const pan=panel('Contrat d\'engagement du jour',
+ 'Ce qui est à faire, ce qui a été décidé, et les interprétations en cours — avec leur statut de vérification.');
+ const cols=document.createElement('div'); cols.className='ccols';
+ // tâches
+ let t='<div class="ccard"><h3>Tâches à effectuer</h3>';
+ (e.taches||[]).forEach(x=>{ t+=`<div class="item prio-${x.prio||'moyenne'}">
+ <span class="chk"></span><span>${x.txt}<br><span class="dl">échéance ${x.deadline||''}${x.prio==='haute'?' · prioritaire':''}</span></span></div>`;});
+ t+='</div>';
+ // décisions
+ let de='<div class="ccard"><h3>Décisions prises</h3>';
+ (e.decisions||[]).forEach(x=>{ de+=`<div class="item"><span>•</span><span>${x}</span></div>`;});
+ de+='</div>';
+ // interprétations
+ let it='<div class="ccard"><h3>Interprétations développées</h3>';
+ (e.interpretations||[]).forEach(x=>{ const s=(x.statut||'');
+ let cls='chk2'; if(s.indexOf('validé')>=0)cls='val'; else if(s.indexOf('hypothèse')>=0)cls='hyp';
+ it+=`<div class="item"><span>•</span><span>${x.txt}<br><span class="st ${cls}">${s}</span></span></div>`;});
+ it+='</div>';
+ cols.innerHTML=t+de+it; pan.appendChild(cols);
+}
+
+if(!root.children.length){
+ root.innerHTML='<div class="panel muted">Aucun volet déclenché aujourd\'hui (conditions calmes). '
+ +'Le rapport texte suffit — usage mesuré.</div>';
+}
+</script>
+</body>
+</html>

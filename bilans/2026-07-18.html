@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La maison — Samedi 18 juillet</title>
+<style>
+:root{
+ --paper:#FAF8F3; --ink:#26262E; --muted:#8B8578; --hair:#EAE4D8; --hair2:#D8D1C2;
+ --fresh:#3D7A8C; --fresh-ink:#2E6273; --ok:#6D9A5F; --warn:#C2803D; --alert:#B85C48;
+ --courbe:#B97F58; --nuit:#5B688714;
+ --c-froid:#D9E6F2; --c-frais:#DCEDEE; --c-agreable:#F1EDDF; --c-tiede:#F2E3CB;
+ --c-chaud:#EDCFAF; --c-treschaud:#E6B694; --c-na:#EFECE4;
+ --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+ --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--sans);
+ font-variant-numeric:tabular-nums}
+.wrap{max-width:740px;margin:0 auto;padding:34px 22px 80px}
+a{color:var(--fresh-ink)}
+/* ---- entête ---- */
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hdate{font-family:var(--serif);font-size:19px}
+.hmeta{color:var(--muted);font-size:13px}
+.etat{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.etat.dot{width:10px;height:10px;border-radius:50%;flex:none}
+/* ---- l'essentiel ---- */
+.essentiel{font-family:var(--serif);font-size:27px;line-height:1.38;margin:34px 0 8px;
+ letter-spacing:.1px}
+.prov{color:var(--muted);font-size:13px;margin-bottom:6px}
+/* ---- sections ---- */
+section{margin-top:52px}
+.slabel{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+ margin-bottom:16px;font-weight:600}
+/* ---- gestes ---- */
+.geste{display:flex;gap:16px;align-items:flex-start;padding:15px 16px;border:1px solid var(--hair);
+ border-radius:14px;background:#fff9;margin-bottom:10px}
+.gheure{font-family:var(--serif);font-size:19px;min-width:78px;color:var(--fresh-ink);padding-top:1px}
+.gic{width:22px;height:22px;color:var(--fresh);flex:none;margin-top:3px}
+.gcorps{flex:1}
+.gtitre{font-weight:650;font-size:16.5px}
+.gdetail{color:var(--ink);opacity:.86;font-size:14.5px;margin-top:1px}
+.gpourquoi{color:var(--muted);font-size:13.5px;margin-top:6px;padding-left:10px;
+ border-left:2px solid var(--hair2);font-style:italic}
+.riendufaire{font-family:var(--serif);font-size:20px;color:var(--ink)}
+.riensub{color:var(--muted);font-size:14px;margin-top:4px}
+/* ---- maison ---- */
+.maison{width:100%;height:auto;display:block}
+.pcell{transition:filter.18s ease}
+.piece{cursor:pointer;outline:none}
+.piece:hover.pcell,.piece:focus-visible.pcell{filter:brightness(.955)}
+.piece.actif.pcell{stroke:var(--fresh);stroke-width:2}
+.pnom{font:12.5px var(--sans);fill:var(--muted)}
+.ptemp{font:600 19px var(--sans);fill:var(--ink)}
+.pmot{font:11.5px var(--sans);fill:var(--muted)}
+.up{fill:var(--warn)}.down{fill:var(--fresh)}.flat{fill:var(--muted)}
+/* hélice des brasseurs (rotation SMIL, centrée moyeu) */
+.fanglyph.fanrotor ellipse{fill:#00000024}
+.fanglyph.fanmoyeu{fill:#00000030}
+.extbox{fill:#ffffff99;stroke:var(--hair2)}
+.exttxt{font:13px var(--sans);fill:var(--ink)}
+.boussole{font:11px var(--sans);fill:var(--muted);letter-spacing:.04em}
+.lecture{color:var(--ink);opacity:.9;font-size:15px;margin-top:14px}
+/* tiroir de détail */
+.tiroir{display:none;border:1px solid var(--hair);border-radius:14px;background:#fff9;
+ padding:16px 18px;margin-top:14px}
+.tiroir.ouvert{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.tir-nom{font-weight:650;font-size:16px}
+.tir-etat{color:var(--muted);font-size:13.5px;margin-top:1px}
+.tir-note{font-size:14px;margin-top:8px;max-width:420px}
+.tir-fan{color:var(--fresh-ink);font-size:13.5px;margin-top:8px}
+.tir-src{color:var(--muted);opacity:.7;font-size:11px;margin-top:8px}
+.tir-mesures{margin-left:auto;text-align:right}
+.tir-t{font:600 26px var(--sans)}
+.tir-hr{color:var(--muted);font-size:13px}
+.spark{display:block;margin-top:8px;margin-left:auto}
+.sparklab{font:9.5px var(--sans);fill:var(--muted)}
+.tir-histlab{color:var(--muted);font-size:11px;text-align:right;margin-top:2px}
+/* ---- journée ---- */
+.journee{width:100%;height:auto;display:block}
+.nuit{fill:var(--nuit)}
+.tick{font:10.5px var(--sans);fill:var(--muted)}
+.minmax{font:12px var(--sans);fill:var(--courbe)}
+.mainten{stroke:var(--ink);stroke-opacity:.35;stroke-dasharray:2 4;stroke-width:1.4}
+.po3{fill:none;stroke:#A0722D;stroke-opacity:.8;stroke-width:1.8;stroke-dasharray:6 4}
+.ppm{fill:none;stroke:#6E6A5E;stroke-opacity:.72;stroke-width:1.5;stroke-dasharray:1.5 3.5}
+.pseuil{stroke:#A0722D;stroke-opacity:.3;stroke-width:1;stroke-dasharray:2 5}
+.plab{font:10.5px var(--sans);fill:#7A7568}
+.plab.o3lab{fill:#96682A}
+.srcline{color:var(--muted);opacity:.7;font-size:11px;margin-top:12px}
+.cible-note{margin-top:14px;text-align:left}
+.cpill{display:inline-block;border:1px solid var(--hair2);border-radius:20px;padding:4px 14px;
+ font-size:13px;color:var(--ink);background:#ffffff77;cursor:help}
+.cpill strong{font-size:14px}
+.curline{stroke:var(--ink);stroke-opacity:.32;stroke-width:1}
+.curdot{fill:var(--courbe);stroke:var(--paper);stroke-width:1.5}
+.curtxt{font:600 12.5px var(--sans);fill:var(--ink)}
+.journee{touch-action:pan-y}
+.nowlab{font:600 12px var(--sans);fill:var(--ink)}
+.nowlab.in{fill:var(--fresh-ink)}
+.bande{fill:var(--fresh);fill-opacity:.16;stroke:var(--fresh);stroke-opacity:.38}
+.bandetxt{font:600 11.5px var(--sans);fill:var(--fresh-ink)}
+.legende{color:var(--muted);font-size:13px;margin-top:10px}
+/* ---- horizon ---- */
+.chips{display:flex;gap:8px;justify-content:space-between}
+.chip{flex:1;text-align:center;padding:10px 4px 8px;border-radius:12px;border:1px solid transparent}
+.chip.cle{border-color:var(--hair2);background:#ffffff77}
+.chipmax{font-weight:650;font-size:15px}
+.chipbar{position:relative;height:66px;width:10px;margin:6px auto;background:var(--hair);border-radius:6px}
+.chipbar span{position:absolute;left:0;width:10px;border-radius:6px;display:block}
+.chipmin{color:var(--muted);font-size:12px}
+.chipjour{font-size:12.5px;margin-top:6px}
+.chipmot{font-size:11px;color:var(--warn);margin-top:2px;min-height:14px}
+.chipmot.frais{color:var(--fresh-ink)}
+.recit{color:var(--ink);opacity:.9;font-size:15px;margin-top:16px}
+/* ---- signaux ---- */
+.signal{padding:2px 0 2px 14px;border-left:2px solid var(--hair2);color:var(--ink);opacity:.85;
+ font-size:14.5px;margin-bottom:12px}
+/* ---- comprendre ---- */
+details{border-top:1px solid var(--hair)}
+details:last-of-type{border-bottom:1px solid var(--hair)}
+summary{cursor:pointer;padding:13px 2px;font-weight:600;font-size:15px;list-style:none;
+ display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"";width:7px;height:7px;border-right:1.6px solid var(--muted);
+ border-bottom:1.6px solid var(--muted);transform:rotate(-45deg);transition:transform.18s;flex:none}
+details[open] summary::before{transform:rotate(45deg)}
+details p{margin:0 0 14px;color:var(--ink);opacity:.88;font-size:14.5px;padding-left:17px}
+/* ---- pied ---- */
+footer{margin-top:64px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--hair);padding-top:14px}
+/* ---- apparition douce ---- */
+@media (prefers-reduced-motion: no-preference){
+.reveal{opacity:0;transform:translateY(7px);animation:pose.55s ease forwards}
+.reveal:nth-of-type(1){animation-delay:.02s}.reveal:nth-of-type(2){animation-delay:.09s}
+.reveal:nth-of-type(3){animation-delay:.16s}.reveal:nth-of-type(4){animation-delay:.23s}
+.reveal:nth-of-type(5){animation-delay:.30s}.reveal:nth-of-type(6){animation-delay:.37s}
+.reveal:nth-of-type(7){animation-delay:.44s}.reveal:nth-of-type(8){animation-delay:.51s}
+.reveal:nth-of-type(9){animation-delay:.58s}
+ @keyframes pose{to{opacity:1;transform:none}}
+}
+@media (max-width:560px){
+.essentiel{font-size:22px}
+.gheure{min-width:60px;font-size:17px}
+.chips{flex-wrap:wrap}.chip{flex:1 1 22%}
+.tir-mesures{margin-left:0;text-align:left}
+.spark{margin-left:0}
+.tir-histlab{text-align:left}
+}
+@media print{.tiroir{display:none} body{background:#fff} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="reveal">
+ <span class="hdate">Samedi 18 juillet</span>
+ <span class="hmeta">Trilport · relevé de 6 h 52</span>
+ <span class="etat"><span class="dot" style="background:var(--fresh)"></span>Reset réussi, sauf une pièce</span>
+</header>
+<p class="essentiel reveal">La pluie annoncée n&#x27;est pas tombée, le ciel s&#x27;est dégagé et la nuit a été radiative: 15,6° dehors au petit matin, et la maison s&#x27;est vidée pour de bon — 23° de moyenne, le matin le plus frais depuis avant la vague. La Chambre a battu son record: 28° hier après-midi, 18,6° ce matin. Une seule pièce a raté la nuit, et c&#x27;est spectaculaire: Chambre étage est la seule plus chaude qu&#x27;hier.</p>
+<p class="prov reveal">Relevé de 6 h 52 · une quinzaine de sondes + station du patio · nuit relue heure par heure via InfluxDB · prévisions Météo-France (Meaux) et qualité de l&#x27;air Open-Meteo</p>
+<section class="reveal" data-section="gestes"><div class="slabel">Aujourd’hui</div><div class="geste"><svg viewBox="0 0 22 22" class="gic" aria-hidden="true"><path d="M4 11 V4 h9 v14 h-9 v-3 M13 8 l6 -3 v13 l-6 -3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+ <div class="gheure">maintenant</div>
+ <div class="gcorps"><div class="gtitre">Ouvrir Chambre étage — la fenêtre ET la porte</div>
+ <div class="gdetail">Fenêtre de Chambre étage grande ouverte, porte entrebâillée, et le Velux du bureau à fond (il est à 11 %). Le reste de la maison peut rester ouvert encore trois heures.</div>
+ <div class="gpourquoi">16° dehors contre 26,7° dans la pièce: dix degrés d&#x27;écart gratuits. Chambre étage est restée fermée toute la nuit — c&#x27;est la seule pièce qui n&#x27;a pas profité du froid, et il lui reste environ trois heures pour rattraper quatre à six degrés.</div></div></div><div class="geste"><svg viewBox="0 0 22 22" class="gic" aria-hidden="true"><rect x="4.5" y="4" width="13" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><line x1="11" y1="4" x2="11" y2="18" stroke="currentColor" stroke-width="1.7"/></svg>
+ <div class="gheure">7 h 45</div>
+ <div class="gcorps"><div class="gtitre">Occulter le volet est de la Chambre</div>
+ <div class="gdetail">Avant que le soleil ne touche le vitrage est. La fenêtre peut rester entrouverte encore un moment, c&#x27;est le rayonnement qu&#x27;on bloque, pas l&#x27;air.</div>
+ <div class="gpourquoi">C&#x27;est le geste au meilleur rendement de la journée. Sans lui, le soleil direct fait reprendre un degré par heure à la pièce entre 8 h et midi — la nuit record serait effacée avant le déjeuner.</div></div></div><div class="geste"><svg viewBox="0 0 22 22" class="gic" aria-hidden="true"><rect x="4.5" y="4" width="13" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><line x1="11" y1="4" x2="11" y2="18" stroke="currentColor" stroke-width="1.7"/></svg>
+ <div class="gheure">10 h, puis 22 h</div>
+ <div class="gcorps"><div class="gtitre">Sceller à 10 h, tout rouvrir à 22 h</div>
+ <div class="gdetail">À 10 h: châssis, Velux, volets et rideaux. La Chambre ferme la première (dès 8 h 30), Chambre étage peut tenir jusqu&#x27;à 11 h. Le soir, rouvrir à 22 h en commençant par le Velux et l&#x27;étage.</div>
+ <div class="gpourquoi">Dehors rattrape la maison vers 10 h et l&#x27;ozone franchit son seuil à 13 h. Le soir, les deux conditions se rejoignent vers 22 h — et les rafales, à 47 km/h en fin d&#x27;après-midi, sont retombées à 32: le Velux peut rouvrir sans risque.</div></div></div></section><section class="reveal" data-section="maison"><div class="slabel">La maison, maintenant</div>
+<svg viewBox="0 0 720 326" class="maison" role="img" aria-label="La maison pièce par pièce"><g class="extpill"><rect x="470" y="10" width="204" height="34" rx="17" class="extbox"/>
+ <text x="572" y="32" text-anchor="middle" class="exttxt">Dehors 16,2° · frais</text></g><path d="M 38 98 L 360 26 L 682 98" fill="none" stroke="var(--hair2)" stroke-width="2.5" stroke-linecap="round"/>
+ <g class="piece" data-room="Bureau" tabindex="0" role="button" aria-label="Bureau, 24,2 degrés, agréable">
+ <rect x="46.0" y="104" width="311.5" height="88" rx="11" fill="var(--c-agreable)" class="pcell"/>
+ <text x="201.8" y="130" text-anchor="middle" class="pnom">Bureau</text>
+ <text x="201.8" y="158" text-anchor="middle" class="ptemp">24,2°<tspan class="down"> ↘</tspan></text>
+ <text x="201.8" y="178" text-anchor="middle" class="pmot">agréable</text><g class="fanglyph" transform="translate(342.5,120.0)"><g class="fanrotor"><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(0)"/><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(120)"/><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(240)"/><animateTransform attributeName="transform" type="rotate" from="0 0 0" to="-360 0 0" dur="1.8s" repeatCount="indefinite"/></g><circle r="1.6" class="fanmoyeu"/></g>
+ </g>
+ <g class="piece" data-room="Chambre étage" tabindex="0" role="button" aria-label="Chambre étage, 26,7 degrés, agréable">
+ <rect x="362.5" y="104" width="311.5" height="88" rx="11" fill="var(--c-agreable)" class="pcell"/>
+ <text x="518.2" y="130" text-anchor="middle" class="pnom">Chambre étage</text>
+ <text x="518.2" y="158" text-anchor="middle" class="ptemp">26,7°<tspan class="up"> ↗</tspan></text>
+ <text x="518.2" y="178" text-anchor="middle" class="pmot">agréable</text>
+ </g>
+ <g class="piece" data-room="Salon" tabindex="0" role="button" aria-label="Salon, 22,6 degrés, frais">
+ <rect x="46.0" y="198" width="100.5" height="88" rx="11" fill="var(--c-frais)" class="pcell"/>
+ <text x="96.2" y="224" text-anchor="middle" class="pnom">Salon</text>
+ <text x="96.2" y="252" text-anchor="middle" class="ptemp">22,6°<tspan class="down"> ↘</tspan></text>
+ <text x="96.2" y="272" text-anchor="middle" class="pmot">frais</text>
+ </g>
+ <g class="piece" data-room="Cuisine" tabindex="0" role="button" aria-label="Cuisine, 25,4 degrés, agréable">
+ <rect x="151.5" y="198" width="100.5" height="88" rx="11" fill="var(--c-agreable)" class="pcell"/>
+ <text x="201.8" y="224" text-anchor="middle" class="pnom">Cuisine</text>
+ <text x="201.8" y="252" text-anchor="middle" class="ptemp">25,4°<tspan class="down"> ↘</tspan></text>
+ <text x="201.8" y="272" text-anchor="middle" class="pmot">agréable</text>
+ </g>
+ <g class="piece" data-room="Living" tabindex="0" role="button" aria-label="Living, 20,7 degrés, frais">
+ <rect x="257.0" y="198" width="100.5" height="88" rx="11" fill="var(--c-frais)" class="pcell"/>
+ <text x="307.2" y="224" text-anchor="middle" class="pnom">Living</text>
+ <text x="307.2" y="252" text-anchor="middle" class="ptemp">20,7°<tspan class="down"> ↘</tspan></text>
+ <text x="307.2" y="272" text-anchor="middle" class="pmot">frais</text><g class="fanglyph" transform="translate(342.5,214.0)"><g class="fanrotor"><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(0)"/><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(120)"/><ellipse cx="0" cy="-4.6" rx="2.1" ry="4.4" transform="rotate(240)"/><animateTransform attributeName="transform" type="rotate" from="0 0 0" to="-360 0 0" dur="3.5s" repeatCount="indefinite"/></g><circle r="1.6" class="fanmoyeu"/></g>
+ </g>
+ <g class="piece" data-room="Chambre" tabindex="0" role="button" aria-label="Chambre, 18,6 degrés, fraîche">
+ <rect x="362.5" y="198" width="100.5" height="88" rx="11" fill="var(--c-frais)" class="pcell"/>
+ <text x="412.8" y="224" text-anchor="middle" class="pnom">Chambre</text>
+ <text x="412.8" y="252" text-anchor="middle" class="ptemp">18,6°<tspan class="down"> ↘</tspan></text>
+ <text x="412.8" y="272" text-anchor="middle" class="pmot">fraîche</text>
+ </g>
+ <g class="piece" data-room="SdB" tabindex="0" role="button" aria-label="Salle de bain, 23,4 degrés, fraîche">
+ <rect x="468.0" y="198" width="100.5" height="88" rx="11" fill="var(--c-frais)" class="pcell"/>
+ <text x="518.2" y="224" text-anchor="middle" class="pnom">Salle de bain</text>
+ <text x="518.2" y="252" text-anchor="middle" class="ptemp">23,4°<tspan class="down"> ↘</tspan></text>
+ <text x="518.2" y="272" text-anchor="middle" class="pmot">fraîche</text>
+ </g>
+ <g class="piece" data-room="Réserve" tabindex="0" role="button" aria-label="Réserve, 24 degrés, agréable">
+ <rect x="573.5" y="198" width="100.5" height="88" rx="11" fill="var(--c-agreable)" class="pcell"/>
+ <text x="623.8" y="224" text-anchor="middle" class="pnom">Réserve</text>
+ <text x="623.8" y="252" text-anchor="middle" class="ptemp">24°<tspan class="down"> ↘</tspan></text>
+ <text x="623.8" y="272" text-anchor="middle" class="pmot">agréable</text>
+ </g><line x1="36" y1="294" x2="684" y2="294" stroke="var(--hair2)" stroke-width="2"/><text x="46" y="316" class="boussole">← ouest · soleil du soir</text><text x="674" y="316" text-anchor="end" class="boussole">soleil du matin · est →</text></svg>
+<p class="lecture">Maison fraîche et calme, mais coupée en deux d&#x27;une façon inhabituelle: l&#x27;écart n&#x27;est pas entre le bas et le haut, il est entre ce qui a été ouvert et ce qui ne l&#x27;a pas été. Huit degrés séparent la Chambre (18,6°) de Chambre étage (26,7°) — deux pièces du même bâtiment, la même nuit. Le Bureau, à l&#x27;étage, est plus frais que la Cuisine du rez-de-chaussée.</p>
+<p class="cible-note"><span class="cpill" title="Le point où le corps est bien, recalculé chaque jour sur les 7 derniers jours dehors (27,2° en moyenne): semaine chaude, cible plus haute — l&#x27;organisme s&#x27;acclimate. C&#x27;est le centre de la zone de confort du diagramme de Givoni.
+Au point cible: 26,2° · 10,5 g/kg d&#x27;eau (49 %) · 53 kJ/kg — l&#x27;énergie que porte chaque kilo d&#x27;air. Le ressenti y est neutre: ni moiteur, ni sécheresse, ni chaud, ni froid.
+Dehors à l&#x27;instant: 16,2° · 9,8 g/kg (85 %) · 41 kJ/kg → plus léger que la cible: l&#x27;air entrant rafraîchit vraiment.">Cible de confort <strong>26,2° · 49 %</strong></span></p>
+<div class="tiroir" id="tiroir" aria-live="polite">
+ <div><div class="tir-nom"></div><div class="tir-etat"></div><div class="tir-note"></div><div class="tir-fan"></div><div class="tir-src"></div></div>
+ <div class="tir-mesures"><div class="tir-t"></div><div class="tir-hr"></div>
+ <div class="tir-spark"></div><div class="tir-histlab"></div></div>
+</div>
+<p class="srcline">Mesures locales · historique local</p></section><section class="reveal" data-section="journee"><div class="slabel">La journée dehors</div><svg viewBox="0 0 720 236" class="journee" id="svgJour" role="img" aria-label="Température extérieure sur la journée"><rect x="38" y="22" width="174.6" height="160" class="nuit"/><rect x="664.0" y="22" width="36.0" height="160" class="nuit"/><line x1="38" y1="182" x2="700" y2="182" stroke="var(--hair2)" stroke-width="1.5"/><text x="38.0" y="198" text-anchor="middle" class="tick">0 h</text><text x="124.3" y="198" text-anchor="middle" class="tick">3 h</text><text x="210.7" y="198" text-anchor="middle" class="tick">6 h</text><text x="297.0" y="198" text-anchor="middle" class="tick">9 h</text><text x="383.4" y="198" text-anchor="middle" class="tick">12 h</text><text x="469.7" y="198" text-anchor="middle" class="tick">15 h</text><text x="556.1" y="198" text-anchor="middle" class="tick">18 h</text><text x="642.4" y="198" text-anchor="middle" class="tick">21 h</text><g><rect x="235.7" y="206" width="90.1" height="20" rx="10" class="bande"><title>La fenêtre est ouverte maintenant et se referme vers 10 h. Ce n&#x27;est pas l&#x27;ozone qui commande ce matin (il ne franchit son seuil qu&#x27;à 13 h) mais la température: dehors rejoint la maison vers 10 h 40. La Chambre, plus froide, est rattrapée dès 8 h 30; Chambre étage, plus chaude, garde un écart utile jusqu&#x27;à 11 h.</title></rect></g><g><rect x="671.2" y="206" width="28.8" height="20" rx="10" class="bande"><title>Les deux conditions se rejoignent vers 22 h: l&#x27;ozone repasse sous son seuil à 21 h et dehors repasse sous la maison à 22 h (23,4°). Les rafales, à 47 km/h vers 17 h, sont retombées à 32 — le Velux peut rouvrir sans risque mécanique. Ensuite la nuit descend à 14°, la plus froide depuis le 5 juillet.</title></rect></g><line x1="38" y1="133.7" x2="700" y2="133.7" class="pseuil"/><text x="41" y="129.7" class="plab">seuil ozone (100)</text><path d="M 38.0 146.7 C 42.8 147.1 57.2 148.2 66.8 148.7 C 76.4 149.1 86.0 148.9 95.6 149.6 C 105.2 150.4 114.8 151.9 124.3 153.0 C 133.9 154.1 143.5 155.5 153.1 156.4 C 162.7 157.3 172.3 157.8 181.9 158.3 C 191.5 158.9 201.1 159.6 210.7 159.8 C 220.3 159.9 229.9 159.2 239.5 159.3 C 249.1 159.4 258.7 161.0 268.3 160.3 C 277.9 159.5 287.4 156.7 297.0 154.9 C 306.6 153.2 316.2 151.4 325.8 149.6 C 335.4 147.9 345.0 146.2 354.6 144.3 C 364.2 142.4 373.8 140.0 383.4 138.0 C 393.0 136.0 402.6 133.6 412.2 132.2 C 421.8 130.9 431.4 130.7 441.0 129.8 C 450.6 128.9 460.1 128.0 469.7 126.9 C 479.3 125.9 488.9 124.0 498.5 123.5 C 508.1 123.1 517.7 123.9 527.3 124.0 C 536.9 124.2 546.5 124.0 556.1 124.5 C 565.7 125.0 575.3 126.0 584.9 126.9 C 594.5 127.8 604.1 128.6 613.7 129.8 C 623.2 131.0 632.8 132.9 642.4 134.2 C 652.0 135.5 661.6 136.3 671.2 137.5 C 680.8 138.8 695.2 141.2 700.0 141.9" class="po3"/><text x="698" y="129.7" text-anchor="end" class="plab o3lab">ozone</text><path d="M 38.0 166.8 C 42.8 166.8 57.2 166.8 66.8 166.8 C 76.4 166.8 86.0 166.8 95.6 166.8 C 105.2 166.8 114.8 166.8 124.3 166.8 C 133.9 166.8 143.5 166.8 153.1 166.8 C 162.7 166.8 172.3 166.8 181.9 166.8 C 191.5 166.8 201.1 167.1 210.7 166.8 C 220.3 166.5 229.9 165.5 239.5 164.9 C 249.1 164.3 258.7 163.3 268.3 163.0 C 277.9 162.7 287.4 162.7 297.0 163.0 C 306.6 163.3 316.2 164.6 325.8 164.9 C 335.4 165.2 345.0 164.9 354.6 164.9 C 364.2 164.9 373.8 164.6 383.4 164.9 C 393.0 165.2 402.6 166.8 412.2 166.8 C 421.8 166.8 431.4 165.2 441.0 164.9 C 450.6 164.6 460.1 164.9 469.7 164.9 C 479.3 164.9 488.9 164.9 498.5 164.9 C 508.1 164.9 517.7 164.9 527.3 164.9 C 536.9 164.9 546.5 164.3 556.1 164.9 C 565.7 165.5 575.3 168.1 584.9 168.7 C 594.5 169.3 604.1 169.0 613.7 168.7 C 623.2 168.4 632.8 167.4 642.4 166.8 C 652.0 166.2 661.6 165.5 671.2 164.9 C 680.8 164.3 695.2 163.3 700.0 163.0" class="ppm"/><text x="698" y="175.0" text-anchor="end" class="plab">PM2.5</text><path d="M 38.0 113.8 C 42.8 115.4 57.2 120.9 66.8 123.5 C 76.4 126.1 86.0 126.9 95.6 129.4 C 105.2 131.8 114.8 134.9 124.3 138.2 C 133.9 141.4 143.5 145.9 153.1 148.9 C 162.7 151.8 172.3 153.3 181.9 155.7 C 191.5 158.1 201.1 161.5 210.7 163.5 C 220.3 165.4 229.9 168.8 239.5 167.4 C 249.1 165.9 258.7 160.2 268.3 154.7 C 277.9 149.2 287.4 141.7 297.0 134.3 C 306.6 126.8 316.2 117.9 325.8 109.9 C 335.4 101.9 345.0 93.3 354.6 86.5 C 364.2 79.7 373.8 73.5 383.4 69.0 C 393.0 64.4 402.6 61.7 412.2 59.2 C 421.8 56.8 431.4 54.5 441.0 54.4 C 450.6 54.2 460.1 59.9 469.7 58.3 C 479.3 56.6 488.9 43.2 498.5 44.6 C 508.1 46.1 517.7 66.7 527.3 67.0 C 536.9 67.4 546.5 49.2 556.1 46.6 C 565.7 44.0 575.3 47.4 584.9 51.4 C 594.5 55.5 604.1 66.4 613.7 70.9 C 623.2 75.5 632.8 74.8 642.4 78.7 C 652.0 82.6 661.6 88.9 671.2 94.3 C 680.8 99.7 695.2 108.1 700.0 110.9" fill="none" stroke="var(--courbe)" stroke-width="2.6" stroke-linecap="round"/><circle cx="498.5" cy="44.6" r="3" fill="var(--courbe)"/><text x="498.5" y="62.6" text-anchor="middle" class="minmax">28,5° à 16 h</text><circle cx="239.5" cy="167.4" r="3" fill="var(--courbe)"/><text x="239.5" y="157.4" text-anchor="middle" class="minmax">15,9° à 7 h</text><line x1="235.6" y1="24" x2="235.6" y2="182" class="mainten"/><circle cx="235.6" cy="96.3" r="4.2" fill="var(--fresh)" stroke="var(--paper)" stroke-width="1.5"/><text x="244.6" y="86.3" text-anchor="start" class="nowlab in">dedans 23,2°</text><circle cx="235.6" cy="164.5" r="4.2" fill="var(--courbe)" stroke="var(--paper)" stroke-width="1.5"/><text x="244.6" y="154.5" text-anchor="start" class="nowlab">dehors 16,2°</text><g id="curJ" style="display:none" pointer-events="none"><line id="curJl" y1="24" y2="182" class="curline"/><circle id="curJc" r="4.2" class="curdot"/><text id="curJt" class="curtxt"/></g></svg><div class="legende">Soleil 6 h 04 → 21 h 45 · bandes: quand ouvrir · pointillés: ozone / particules fines PM2.5 (µg/m³) — touchez la courbe</div><p class="srcline">Prévisions Meaux (MCP météo) · air: Open-Meteo · « maintenant »: mesure locale</p></section><section class="reveal" data-section="horizon"><div class="slabel">Les jours qui viennent</div>
+<div class="chips"><div class="chip">
+ <div class="chipmax">28°</div>
+ <div class="chipbar"><span style="top:4px;height:44px;background:var(--c-agreable)"></span></div>
+ <div class="chipmin">16°</div>
+ <div class="chipjour">sam 18</div>
+ <div class="chipmot">beau · sec&nbsp;</div>
+ </div><div class="chip cle">
+ <div class="chipmax">24°</div>
+ <div class="chipbar"><span style="top:18px;height:37px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">14°</div>
+ <div class="chipjour">dim 19</div>
+ <div class="chipmot">nuit froide&nbsp;</div>
+ </div><div class="chip">
+ <div class="chipmax">25°</div>
+ <div class="chipbar"><span style="top:15px;height:43px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">13°</div>
+ <div class="chipjour">lun 20</div>
+ <div class="chipmot">couvert · frais&nbsp;</div>
+ </div><div class="chip">
+ <div class="chipmax">26°</div>
+ <div class="chipbar"><span style="top:11px;height:44px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">14°</div>
+ <div class="chipjour">mar 21</div>
+ <div class="chipmot">ciel clair&nbsp;</div>
+ </div><div class="chip">
+ <div class="chipmax">26°</div>
+ <div class="chipbar"><span style="top:13px;height:41px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">14°</div>
+ <div class="chipjour">mer 22</div>
+ <div class="chipmot">variable&nbsp;</div>
+ </div><div class="chip">
+ <div class="chipmax">24°</div>
+ <div class="chipbar"><span style="top:18px;height:32px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">15°</div>
+ <div class="chipjour">jeu 23</div>
+ <div class="chipmot">venté&nbsp;</div>
+ </div><div class="chip">
+ <div class="chipmax">26°</div>
+ <div class="chipbar"><span style="top:11px;height:52px;background:var(--c-frais)"></span></div>
+ <div class="chipmin">12°</div>
+ <div class="chipjour">ven 24</div>
+ <div class="chipmot">nuit très froide&nbsp;</div>
+ </div></div>
+<p class="recit">La semaine qui vient ressemble à un mois de juillet ordinaire, ce qui n&#x27;était plus arrivé depuis dix jours: aucune journée au-dessus de 29°, plus aucune contrainte d&#x27;ozone après aujourd&#x27;hui, et des nuits qui redescendent entre 11 et 15°. Le régime de siège est terminé, l&#x27;aération nocturne redevient l&#x27;outil principal. La journée importante n&#x27;est pas un pic mais une nuit: celle de ce soir, la plus froide depuis le 5 juillet — le moment de vider ce qui reste, Chambre étage en tête.</p>
+<p class="srcline">Prévisions Meaux (MCP météo)</p></section><section class="reveal" data-section="signaux"><div class="slabel">Signaux discrets</div><div class="signal">Le Velux a décroché de la routine. Après cinq nuits d&#x27;affilée à fond du 11 au 16 juillet, il est resté fermé la nuit de l&#x27;orage — c&#x27;était la bonne décision —, puis à 2 % avant-hier, et cette nuit il est monté à 29 % en fin d&#x27;après-midi avant de retomber à 11 % vers 22 h, c&#x27;est-à-dire exactement au moment où il fallait l&#x27;ouvrir. Deux nuits perdues de suite. Le geste avait été acquis, il s&#x27;est défait en même temps que l&#x27;urgence: c&#x27;est le meilleur argument pour le déclencher sur horaire, environ 2 kWh par nuit sans y penser.</div><div class="signal">La porte de Chambre étage est devenue le maillon critique. Tant que le rez-de-chaussée posait problème, elle passait inaperçue; maintenant que le reste de la maison respire, elle concentre à elle seule toute la chaleur qui reste. Une porte entrebâillée ne coûte rien et vaut quatre à six degrés sur la pièce.</div><div class="signal">Les volets du Living affichent « fermé » alors qu&#x27;ils étaient ouverts. Troisième fois que cet écart apparaît entre l&#x27;état affiché et ce que mesurent les sondes. Sans effet sur la température, mais cela empêche de vérifier après coup quels gestes ont vraiment eu lieu — et c&#x27;est sur cette vérification que repose le réglage du modèle. À trancher par un simple contrôle visuel à la prochaine ouverture commandée.</div><div class="signal">Occasion de mesure ce soir. La nuit qui vient réunit pour la première fois depuis le 16 juillet toutes les conditions d&#x27;un bon relevé: huit à dix degrés d&#x27;écart, aucun ozone, vent modéré. Si le Velux et Chambre étage sont ouverts, un point de contrôle vers 21 h 30 permettrait enfin de régler le comportement de l&#x27;étage — la dernière inconnue importante.</div><p class="srcline">Historique local (InfluxDB)</p></section><section class="reveal" data-section="comprendre"><div class="slabel">Comprendre ce bilan</div><details><summary>Comment on sait qu&#x27;une pièce a été ouverte</summary><p>L&#x27;humidité relative est trompeuse: elle monte quand l&#x27;air refroidit, même si rien n&#x27;est entré. C&#x27;est pourquoi la Chambre affiche 74 % ce matin tout en contenant l&#x27;air le plus sec de la maison. On regarde donc la quantité réelle d&#x27;eau par kilo d&#x27;air, qui ne bouge que si l&#x27;air change de place. Ce matin, le Living et la Chambre sont exactement à la valeur du dehors: leur air a été intégralement renouvelé. Chambre étage en contient près de deux grammes de plus: le sien est resté enfermé. C&#x27;est un test indépendant du thermomètre, et il a tranché les deux questions du jour.</p></details><details><summary>Pourquoi la maison chauffe même quand il ne fait pas chaud</summary><p>Hier, le thermomètre extérieur n&#x27;a jamais dépassé 26° — la « dose de chaleur » de la journée était nulle pour la première fois depuis le début du suivi. Et pourtant la maison a repris trois degrés entre le matin et le soir. La chaleur n&#x27;est pas entrée par l&#x27;air, elle est entrée par le soleil, à travers les vitrages. C&#x27;est pour cela que fermer les volets et les rideaux compte davantage que fermer les fenêtres, et que le geste de 7 h 45 sur le volet est de la Chambre vaut à lui seul plusieurs degrés.</p></details><details><summary>Où en est la batterie de la maison</summary><p>La pierre meulière stocke la chaleur le jour et la rend la nuit, comme une batterie. Cette nuit elle a restitué entre 10 et 14 kWh — l&#x27;équivalent d&#x27;une petite climatisation qui aurait tourné neuf heures gratuitement. Ce matin elle est pratiquement vide, ce qui n&#x27;était jamais arrivé depuis le début de la vague. Le peu qui reste n&#x27;est pas réparti dans les murs: il est concentré dans Chambre étage et, un peu, du côté ouest. La journée va en remettre cinq à huit, la nuit prochaine devrait en reprendre huit à douze: le bilan du jour sera négatif.</p></details></section>
+<footer>Bilan écrit par l'assistant de la maison · généré le 18/07/2026 07:05 ·
+chaque chiffre est traçable (voir « Comprendre ce bilan »)</footer>
+</div>
+<template id="sp-Chambre"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,22.9 10.5,19.5 17.1,10.3 23.6,17.8 30.1,16.8 36.6,14.7 43.2,15.9 49.7,20.0 56.2,18.5 62.7,18.0 69.3,5.0 75.8,9.2 82.3,18.1 88.8,9.2 95.4,17.6 101.9,14.5 108.4,8.6 114.9,20.6 121.5,8.6 128.0,25.0" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">29,1°</text><text x="128" y="28" text-anchor="end" class="sparklab">18,6°</text></svg></template><template id="sp-Living"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,20.5 10.5,17.7 17.1,7.7 23.6,19.5 30.1,21.8 36.6,25.0 43.2,23.5 49.7,16.5 56.2,16.5 62.7,6.8 69.3,6.8 75.8,5.0 82.3,8.8 88.8,5.5 95.4,8.8 101.9,7.0 108.4,5.5 114.9,10.0 121.5,11.2 128.0,20.0" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">26,7°</text><text x="128" y="28" text-anchor="end" class="sparklab">18,7°</text></svg></template><template id="sp-Salon"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,19.8 10.5,23.8 17.1,13.0 23.6,18.6 30.1,20.6 36.6,23.0 43.2,25.0 49.7,17.8 56.2,16.2 62.7,12.6 69.3,5.4 75.8,5.0 82.3,11.4 88.8,7.8 95.4,11.8 101.9,8.6 108.4,5.8 114.9,14.6 121.5,11.0 128.0,20.6" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">26,5°</text><text x="128" y="28" text-anchor="end" class="sparklab">21,5°</text></svg></template><template id="sp-SdB"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,16.9 10.5,21.3 17.1,10.4 23.6,18.2 30.1,18.6 36.6,22.3 43.2,25.0 49.7,16.9 56.2,14.5 62.7,10.1 69.3,10.1 75.8,8.4 82.3,18.9 88.8,13.5 95.4,15.2 101.9,10.1 108.4,5.0 114.9,19.2 121.5,15.2 128.0,17.2" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">27°</text><text x="128" y="28" text-anchor="end" class="sparklab">21,1°</text></svg></template><template id="sp-Reserve"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,17.6 10.5,20.8 17.1,11.5 23.6,19.9 30.1,19.9 36.6,22.2 43.2,25.0 49.7,18.0 56.2,15.2 62.7,12.4 69.3,8.7 75.8,8.3 82.3,9.7 88.8,7.8 95.4,8.7 101.9,7.3 108.4,5.0 114.9,6.4 121.5,6.9 128.0,16.2" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">26,4°</text><text x="128" y="28" text-anchor="end" class="sparklab">22,1°</text></svg></template><template id="sp-Bureau"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,20.3 10.5,25.0 17.1,13.1 23.6,21.4 30.1,22.2 36.6,21.9 43.2,23.9 49.7,16.9 56.2,18.6 62.7,17.8 69.3,5.0 75.8,9.2 82.3,18.1 88.8,12.8 95.4,18.3 101.9,17.5 108.4,12.2 114.9,20.0 121.5,17.2 128.0,23.1" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">30,7°</text><text x="128" y="28" text-anchor="end" class="sparklab">23,5°</text></svg></template><template id="sp-Cuisine"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,19.5 10.5,25.0 17.1,10.8 23.6,22.4 30.1,22.4 36.6,22.4 43.2,24.0 49.7,21.1 56.2,18.5 62.7,15.6 69.3,15.6 75.8,13.4 82.3,16.3 88.8,13.7 95.4,16.3 101.9,14.7 108.4,5.0 114.9,16.0 121.5,16.3 128.0,18.9" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">29,7°</text><text x="128" y="28" text-anchor="end" class="sparklab">23,5°</text></svg></template><template id="sp-Chambre étage"><svg class="spark" viewBox="0 0 132 30" aria-hidden="true"><polyline points="4.0,15.7 10.5,23.9 17.1,12.9 23.6,16.5 30.1,18.8 36.6,14.0 43.2,17.7 49.7,15.4 56.2,14.3 62.7,20.8 69.3,5.0 75.8,9.8 82.3,22.2 88.8,15.7 95.4,20.5 101.9,18.5 108.4,9.2 114.9,25.0 121.5,19.9 128.0,15.1" fill="none" stroke="var(--fresh)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/><text x="128" y="9" text-anchor="end" class="sparklab">30,3°</text><text x="128" y="28" text-anchor="end" class="sparklab">23,2°</text></svg></template>
+<script type="application/json" id="donnees-bilan">{"date": "2026-07-18", "time": "06:52", "etat": "geste", "confort": {"cible": 26.2, "w": 10.5, "tpma": 27.2, "source": "centre de la zone de confort (Givoni), calé sur la moyenne extérieure glissante des 7 derniers jours — encore lestée par la vague, elle va descendre d'environ 1° par jour", "mode": "la maison est 3° sous sa cible: on est en réserve de fraîcheur, il s'agit de la garder, pas d'en gagner"}, "jour": {"t": [21.4, 20.4, 19.8, 18.9, 17.8, 17.1, 16.3, 15.9, 17.2, 19.3, 21.8, 24.2, 26.0, 27.0, 27.5, 27.1, 28.5, 26.2, 28.3, 27.8, 25.8, 25.0, 23.4, 21.7], "o3": [73, 69, 67, 60, 53, 49, 46, 47, 45, 56, 67, 78, 91, 103, 108, 114, 121, 120, 119, 114, 108, 99, 92, 83], "pm": [8, 8, 8, 8, 8, 8, 8, 9, 10, 10, 9, 9, 9, 8, 9, 9, 9, 9, 9, 7, 7, 8, 9, 10], "lo": 14.4, "hi": 30.0, "px0": 38, "px1": 700, "ax": 182, "py0": 30}, "zones": [{"name": "Chambre", "affiche": "Chambre", "etage_lbl": "Au rez-de-chaussée", "t": 18.6, "hr": 74, "mot": "fraîche", "delta": -8.6, "note": "Record absolu de la série: 28,2° hier à 15 h, 18,6° ce matin, presque dix degrés perdus. Son air est exactement celui du dehors — la fenêtre est a fait tout le travail.", "source": "Airthings — mesure aussi la qualité de l'air (562 ppm, excellent renouvellement)", "ventilateur": null}, {"name": "Living", "affiche": "Living", "etage_lbl": "Au rez-de-chaussée", "t": 20.7, "hr": 64, "mot": "frais", "delta": -3.5, "note": "A perdu 5,5° d'un trait régulier toute la nuit, et son air est celui de l'extérieur: la pièce était bien ouverte. Curieusement, les volets affichent « fermé » depuis 20 h — c'est l'affichage qui se trompe.", "source": "sonde Climat Living + Meter 598F", "ventilateur": {"sens": "aspiration", "niveau": "modéré", "texte": "Le brasseur tire vers le haut: il décolle l'air chaud du plafond au lieu de le rabattre, ce qui aide la purge au lieu de la contrarier."}}, {"name": "Salon", "affiche": "Salon", "etage_lbl": "Au rez-de-chaussée", "t": 22.6, "hr": 60, "mot": "frais", "delta": -2.4, "note": "Suit le Living avec un temps de retard, comme d'habitude. Rien à signaler.", "source": "Hub 2 B4D0", "ventilateur": null}, {"name": "SdB", "affiche": "Salle de bain", "etage_lbl": "Au rez-de-chaussée", "t": 23.4, "hr": 56, "mot": "fraîche", "delta": -0.6, "note": "Peu de mouvement: petite pièce sans ouvrant sur la purge. À confirmer demain si la sonde 0E56 est vraiment revenue.", "source": "sonde Climat SdB — le Meter 0E56, muet depuis des semaines, remonte une valeur ce matin", "ventilateur": null}, {"name": "Réserve", "affiche": "Réserve", "etage_lbl": "Au rez-de-chaussée", "t": 24.0, "hr": 56, "mot": "agréable", "delta": -2.0, "note": "Deux degrés perdus grâce à l'extracteur, qui tourne en continu. C'est la pièce de stockage, elle traîne toujours un peu.", "source": "sonde Climat Réserve + Meter 95E5", "ventilateur": null}, {"name": "Bureau", "affiche": "Bureau", "etage_lbl": "À l'étage", "t": 24.2, "hr": 54, "mot": "agréable", "delta": -2.1, "note": "Descente lente et régulière, freinée par deux choses: le poste de travail qui chauffe en continu, et le Velux resté presque fermé qui lui coupe son évacuation d'air chaud.", "source": "sonde Climat Bureau + station GW1200A (le BME680 est muet ce matin)", "ventilateur": {"sens": "aspiration", "niveau": "soutenu", "texte": "Le brasseur tourne fort en aspiration — il fait ce qu'il faut, mais sans le Velux ouvert il pousse l'air chaud contre un plafond fermé."}}, {"name": "Cuisine", "affiche": "Cuisine", "etage_lbl": "Au rez-de-chaussée", "t": 25.4, "hr": 53, "mot": "agréable", "delta": -0.8, "note": "Un degré seulement. L'ouest de la maison purge toujours moins bien que l'est: l'air y circule peu, même quand tout est ouvert.", "source": "sonde Climat Cuisine", "ventilateur": null}, {"name": "Chambre étage", "affiche": "Chambre étage", "etage_lbl": "À l'étage", "t": 26.7, "hr": 53, "mot": "agréable", "delta": 1.7, "note": "La seule pièce plus chaude qu'hier matin, sur la meilleure nuit du mois. Elle descendait normalement jusqu'à 21 h, puis est remontée et n'a plus bougé: porte fermée, Velux retombé à 11 %, et son air n'a pas été renouvelé de la nuit.", "source": "sonde Climat Chambre étage + réveil EE32", "ventilateur": null}]}</script>
+<script>
+(function(){
+ var isle = document.getElementById('donnees-bilan');
+ if(!isle) return;
+ var data = JSON.parse(isle.textContent);
+ var rooms = {};
+ (data.zones||[]).forEach(function(z){ rooms[z.name] = z; });
+ var tiroir = document.getElementById('tiroir');
+ if(!tiroir) return;
+ var actif = null;
+ function ferme(){ tiroir.classList.remove('ouvert'); if(actif){actif.classList.remove('actif');} actif=null; }
+ function ouvre(el){
+ var z = rooms[el.getAttribute('data-room')]; if(!z) return;
+ if(actif===el){ ferme(); return; }
+ if(actif){ actif.classList.remove('actif'); }
+ actif = el; el.classList.add('actif');
+ tiroir.querySelector('.tir-nom').textContent = z.affiche || z.name;
+ var etat = z.etage_lbl + ' · ' + z.mot;
+ if(z.delta!=null){
+ if(Math.abs(z.delta)<0.3){ etat += ' · stable depuis le dernier relevé'; }
+ else { etat += ' · ' + (z.delta>0?'+':'') + String(z.delta).replace('.',',') + '° depuis le dernier relevé'; }
+ }
+ if(data.confort && data.confort.cible!=null && z.t!=null){
+ var dc = Math.round((z.t - data.confort.cible)*10)/10;
+ if(Math.abs(dc)<0.5){ etat += ' · sur la cible de confort'; }
+ else { etat += ' · à ' + (dc>0?'+':'') + String(dc).replace('.',',') + '° de la cible'; }
+ }
+ tiroir.querySelector('.tir-etat').textContent = etat;
+ tiroir.querySelector('.tir-note').textContent = z.note || '';
+ var fanEl = tiroir.querySelector('.tir-fan');
+ if(z.ventilateur && (z.ventilateur.sens==='soufflage'||z.ventilateur.sens==='aspiration')){
+ var f = z.ventilateur;
+ var ftxt = f.texte;
+ if(!ftxt){
+ ftxt = 'Ventilateur: ' + f.sens + (f.niveau ? ' ' + f.niveau: '');
+ if(f.ressenti){ ftxt += ' — l’air bouge, ressenti ≈ −' + String(f.ressenti).replace('.',',') + '°'; }
+ }
+ fanEl.textContent = ftxt;
+ } else { fanEl.textContent = ''; }
+ tiroir.querySelector('.tir-src').textContent = 'Mesure: ' + (z.source || 'sonde locale');
+ tiroir.querySelector('.tir-t').textContent = (z.t!=null? String(z.t).replace('.',','): '—') + ' °C';
+ tiroir.querySelector('.tir-hr').textContent = z.hr!=null ? 'humidité ' + Math.round(z.hr) + ' %': '';
+ var key = z.name.normalize('NFD').replace(/[^A-Za-z0-9]/g,'');
+ var sp = document.getElementById('sp-'+key);
+ var host = tiroir.querySelector('.tir-spark');
+ var lab = tiroir.querySelector('.tir-histlab');
+ host.innerHTML = '';
+ if(sp){ host.appendChild(sp.content.cloneNode(true)); lab.textContent = 'les derniers jours'; }
+ else { lab.textContent = ''; }
+ tiroir.classList.add('ouvert');
+ }
+ document.querySelectorAll('.piece').forEach(function(el){
+ el.addEventListener('click', function(){ ouvre(el); });
+ el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); ouvre(el);} });
+ });
+ // ---- curseur du graphe: l'info sous le doigt, immédiate
+ var jd = data.jour, svg = document.getElementById('svgJour');
+ if(jd && svg){
+ var cur = document.getElementById('curJ'), cl = document.getElementById('curJl'),
+ cc = document.getElementById('curJc'), ct = document.getElementById('curJt');
+ function fx(h){ return jd.px0 + h*(jd.px1-jd.px0)/23; }
+ function fy(t){ return jd.ax - (t-jd.lo)/(jd.hi-jd.lo)*(jd.ax-jd.py0); }
+ function suit(evt){
+ var r = svg.getBoundingClientRect();
+ var sx = (evt.clientX - r.left) * 720 / r.width;
+ var h = Math.round((sx - jd.px0)/(jd.px1-jd.px0)*23);
+ if(h < 0 || h > 23 || jd.t[h] == null){ cur.style.display = 'none'; return; }
+ cur.style.display = '';
+ var x = fx(h);
+ cl.setAttribute('x1', x); cl.setAttribute('x2', x);
+ cc.setAttribute('cx', x); cc.setAttribute('cy', fy(jd.t[h]));
+ var s = h + ' h · ' + String(jd.t[h]).replace('.', ',') + '°';
+ if(jd.o3 && jd.o3[h] != null) s += ' · ozone ' + Math.round(jd.o3[h]) + ' µg/m³';
+ if(jd.pm && jd.pm[h] != null) s += ' · PM2.5 ' + Math.round(jd.pm[h]) + ' µg/m³';
+ ct.textContent = s;
+ var fin = x > (jd.px0 + jd.px1)/2;
+ ct.setAttribute('text-anchor', fin ? 'end': 'start');
+ ct.setAttribute('x', fin ? x - 9: x + 9);
+ ct.setAttribute('y', jd.py0 + 4);
+ }
+ svg.addEventListener('pointermove', suit);
+ svg.addEventListener('pointerdown', suit);
+ svg.addEventListener('pointerleave', function(){ cur.style.display = 'none'; });
+ }
+})();
+</script>
+</body>
+</html>
