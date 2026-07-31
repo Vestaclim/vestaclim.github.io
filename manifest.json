@@ -1,5 +1,5 @@
 {
- "genere": "2026-07-30T07:13:40",
+ "genere": "2026-07-31T07:08:24",
  "dates": [
   {
    "date": "2026-06-26",
@@ -432,6 +432,17 @@
      "label": "matin",
      "md": "bilans/2026-07-30.md",
      "html": "bilans/2026-07-30.html"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-31",
+   "runs": [
+    {
+     "cle": "matin",
+     "label": "matin",
+     "md": "bilans/2026-07-31.md",
+     "html": "bilans/2026-07-31.html"
     }
    ]
   }
